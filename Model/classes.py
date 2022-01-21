@@ -75,7 +75,7 @@ class Hospital:
                         self.hosp_array[j, i] = Wij
                     else:
                         self.hosp_array[i, j] = self.hosp_array[i, j] + Wij
-                        self.hosp_array[j, i] = self.hosp_array[i, j] + Wij
+                        self.hosp_array[j, i] = self.hosp_array[j, i] + Wij
                     
         self.hosp_array = np.log(self.hosp_array) 
 

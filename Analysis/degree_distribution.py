@@ -87,9 +87,6 @@ for block in blocks:
     max_k.append(max(block))
     min_k.append(min(block))
 
-print(max_k, min_k)
-
-
 # subplot of cumulative degree distributions
 
 plt.style.use('seaborn')
@@ -97,13 +94,13 @@ plt.style.use('seaborn')
 f,((ax1, ax2, ax3, ax4), 
 (ax5, ax6, ax7, ax8),
 (ax9, ax10, ax11, ax12),
-(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (12, 8))
+(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (10, 7))
+
+f.suptitle('Cumulative degree distributions', fontsize = 'x-large') 
+f.supylabel('Pk')
+f.supxlabel('k')
 
 axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
-# titles = ['ADM-ADM', 'ADM-MED', 'ADM-NUR', 'ADM-PAT',
-#           'MED-ADM', 'MED-MED', 'MED-NUR', 'MED-PAT',
-#           'NUR-ADM', 'NUR-MED', 'NUR-NUR', 'NUR-PAT',
-#           'PAT-ADM', 'PAT-MED', 'PAT-NUR', 'PAT-PAT']
 
 # create subplot for cumulative degree distributions
 
@@ -125,8 +122,5 @@ axs[4].set_ylabel('MED')
 axs[8].set_ylabel('NUR')
 axs[12].set_ylabel('PAT')
 
-plt.ylabel('Pk')
-plt.xlabel('k')
-
-plt.show()  
-
+f.tight_layout()
+plt.show()

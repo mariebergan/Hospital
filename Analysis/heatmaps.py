@@ -30,12 +30,9 @@ ward_arr = ward_arr[1:76, 1:76]
 ward_hm = sns.heatmap(ward_arr, vmin = 1, vmax = 8)
 ward_hm.set_title('Ward')
 # grid lines dividing the groups
-ward_hm.axhline(8, linewidth = 1, color = 'w')
-ward_hm.axhline(19, linewidth = 1, color = 'w')
-ward_hm.axhline(46, linewidth = 1, color = 'w')
-ward_hm.axvline(8, linewidth = 1, color = 'w')
-ward_hm.axvline(19, linewidth = 1, color = 'w')
-ward_hm.axvline(46, linewidth = 1, color = 'w')
+for x in [8, 19, 46]:
+    ward_hm.axhline(x, linewidth = 1, color = 'w')
+    ward_hm.axvline(x, linewidth = 1, color = 'w')
 plt.show()
 
 def status_heatmap(arr, title):
