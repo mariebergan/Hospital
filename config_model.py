@@ -62,7 +62,7 @@ for g1 in groups:
         i = tab[g1][g1][x] # source ID
         j = tab[g1][g1][x+1] # target ID
 
-        if contacts[i, j] == 0:
+        if (contacts[i, j]) == 0 and (i != j):
             contacts[i, j] = 1
             contacts[j, i] = 1
 
@@ -87,9 +87,11 @@ for g1 in groups:
                     contacts[j, i] += 1
 
 contacts = contacts[1:76, 1:76] # IDene starter på 1
+contacts = contacts + 1
+contacts = np.log(contacts)
 
 # Heatmap
-config_hm = sns.heatmap(contacts)
+config_hm = sns.heatmap(contacts, vmin = 1, vmax = 8)
 config_hm.set_title('Configuration Model')
 for x in [8, 19, 46]:
     config_hm.axhline(x, linewidth = 0.5, color = 'w')
@@ -116,6 +118,7 @@ for g1 in groups:
         if g1 == 'PAT' and len(degrees['PAT'][g2]) < 29:
             degrees['PAT'][g2].extend([0 for i in range(29-len(degrees['PAT'][g2]))])
 
+        degrees[g1][g2] = sorted(degrees[g1][g2])
 
 plt.style.use('seaborn')
 

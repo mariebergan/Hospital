@@ -23,7 +23,7 @@ for line in f:
  
 f.close()
 
-ward_arr = ward_arr+1 # unngå verdier med 0 som man ikke kan ta log av
+ward_arr = ward_arr + 1 # unngå verdier med 0 som man ikke kan ta log av
 
 # heatmap for the entire ward
 ward_arr = ward_arr[1:76, 1:76]
