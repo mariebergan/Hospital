@@ -118,7 +118,7 @@ for g1 in groups:
         if g1 == 'PAT' and len(degrees['PAT'][g2]) < 29:
             degrees['PAT'][g2].extend([0 for i in range(29-len(degrees['PAT'][g2]))])
 
-        degrees[g1][g2] = sorted(degrees[g1][g2])
+        #degrees[g1][g2] = sorted(degrees[g1][g2])
 
 plt.style.use('seaborn')
 
