@@ -29,7 +29,6 @@ ward_arr = ward_arr+1 # unngå verdier med 0 som man ikke kan ta log av
 ward_arr = ward_arr[1:76, 1:76]
 ward_hm = sns.heatmap(ward_arr, vmin = 1, vmax = 8)
 ward_hm.set_title('Ward')
-# grid lines dividing the groups
 for x in [8, 19, 46]:
     ward_hm.axhline(x, linewidth = 1, color = 'w')
     ward_hm.axvline(x, linewidth = 1, color = 'w')

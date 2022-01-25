@@ -2,6 +2,7 @@ import random
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
+from collections import Counter
 
 groups = ['ADM', 'MED', 'NUR', 'PAT']
 tab = {}
@@ -24,7 +25,6 @@ k_max = {'ADM': {'ADM': 258, 'MED': 269, 'NUR': 1096, 'PAT': 151},
 
 for g1 in groups:
     for g2 in groups:
-        
         if g1 == 'ADM':
             for ID in range(1, 9):
                 k = random.randint(k_min[g1][g2], k_max[g1][g2])
@@ -53,7 +53,9 @@ for g1 in groups:
                     tab[g1][g2].append(ID)
                 random.shuffle(tab[g1][g2])
 
+
 contacts = np.zeros((76, 76), dtype = int)
+
 # diagonal
 for g1 in groups:
     for x in range(0, (len(tab[g1][g2])-1), 2): 
@@ -73,8 +75,8 @@ for g1 in groups:
     for g2 in groups:
         if g1 != g2:
             for x in range(min(len(tab[g1][g2]), len(tab[g2][g1]))): 
-                i = tab[g1][g2][x] # source ID
-                j = tab[g2][g1][x] # target ID
+                i = tab[g1][g2][x] 
+                j = tab[g2][g1][x] 
 
                 if contacts[i, j] == 0:
                     contacts[i, j] = 1
@@ -86,21 +88,71 @@ for g1 in groups:
 
 contacts = contacts[1:76, 1:76] # IDene starter på 1
 
-# heatmap
+# Heatmap
 config_hm = sns.heatmap(contacts)
-config_hm.set_title('Configuration model')
+config_hm.set_title('Configuration Model')
 for x in [8, 19, 46]:
     config_hm.axhline(x, linewidth = 0.5, color = 'w')
     config_hm.axvline(x, linewidth = 0.5, color = 'w')
 
-# cumulative degree distributions
-
+# Cumulative degree distributions        
 degrees = {}
-
 for g1 in groups:
     degrees[g1] = {}
     for g2 in groups:
-        degrees[g1][g2] = []
+        occurences = Counter(tab[g1][g2])
+        degrees[g1][g2] = list(occurences.values())
 
-        for ID in tab[g1][g2]:
-            degrees[g1][g2].append()
+        # add nodes with k = 0
+        if g1 == 'ADM' and len(degrees['ADM'][g2]) < 8:
+            degrees['ADM'][g2].extend([0 for i in range(8-len(degrees['ADM'][g2]))])
+        
+        if g1 == 'MED' and len(degrees['MED'][g2]) < 11:
+            degrees['MED'][g2].extend([0 for i in range(11-len(degrees['MED'][g2]))])
+        
+        if g1 == 'NUR' and len(degrees['NUR'][g2]) < 27:
+            degrees['NUR'][g2].extend([0 for i in range(27-len(degrees['NUR'][g2]))])
+        
+        if g1 == 'PAT' and len(degrees['PAT'][g2]) < 29:
+            degrees['PAT'][g2].extend([0 for i in range(29-len(degrees['PAT'][g2]))])
+
+
+plt.style.use('seaborn')
+
+f,((ax1, ax2, ax3, ax4), 
+(ax5, ax6, ax7, ax8),
+(ax9, ax10, ax11, ax12),
+(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (10, 7))
+
+f.suptitle('Cumulative degree distributions - Configuration model', fontsize = 'x-large') 
+f.supylabel('Pk')
+f.supxlabel('k')
+
+axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
+
+i = 0
+for g1 in groups:
+    for g2 in groups:
+        x = np.cumsum(degrees[g1][g2])
+        y = np.arange(len(degrees[g1][g2]))/float(len(degrees[g1][g2]))
+        axs[i].plot(x, 1-y)
+        # axs[i].semilogy()
+        # axs[i].semilogx()
+        i += 1
+
+axs[12].set_xlabel('ADM')
+axs[13].set_xlabel('MED')
+axs[14].set_xlabel('NUR')
+axs[15].set_xlabel('PAT')
+axs[0].set_ylabel('ADM')
+axs[4].set_ylabel('MED')
+axs[8].set_ylabel('NUR')
+axs[12].set_ylabel('PAT')
+f.tight_layout()
+plt.show()
+
+
+
+
+
+

@@ -75,22 +75,27 @@ for node in count:
         PAT_NUR.append(count[x]['NUR'])
         PAT_PAT.append(count[x]['PAT'])
 
-blocks = [ADM_ADM, ADM_MED, ADM_NUR, ADM_PAT, 
+blockss = [ADM_ADM, ADM_MED, ADM_NUR, ADM_PAT, 
           MED_ADM, MED_MED, MED_NUR, MED_PAT,
           NUR_ADM, NUR_MED, NUR_NUR, NUR_PAT,
           PAT_ADM, PAT_MED, PAT_NUR, PAT_PAT]
 
-# get max node degree in the different blocks
-max_k = []
-min_k = []
-for block in blocks:
-    max_k.append(max(block))
-    min_k.append(min(block))
+blocks = []
+for block in blockss:
+    block = block.sort(reverse = True)
+    blocks.append(block)
+
+# get min and max node degree in the blocks
+# max_k = []
+# min_k = []
+# for block in blocks:
+#     max_k.append(max(block))
+#     min_k.append(min(block))
+
 
 # subplot of cumulative degree distributions
 
 plt.style.use('seaborn')
-
 f,((ax1, ax2, ax3, ax4), 
 (ax5, ax6, ax7, ax8),
 (ax9, ax10, ax11, ax12),
@@ -102,8 +107,6 @@ f.supxlabel('k')
 
 axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
 
-# create subplot for cumulative degree distributions
-
 i = 0
 for block in blocks:
     x = np.cumsum(block)
@@ -112,15 +115,16 @@ for block in blocks:
     # axs[i].semilogy()
     # axs[i].semilogx()
     i += 1
-axs[0].set_title('ADM')
-axs[1].set_title('MED')
-axs[2].set_title('NUR')
-axs[3].set_title('PAT')
 
+axs[12].set_xlabel('ADM')
+axs[13].set_xlabel('MED')
+axs[14].set_xlabel('NUR')
+axs[15].set_xlabel('PAT')
 axs[0].set_ylabel('ADM')
 axs[4].set_ylabel('MED')
 axs[8].set_ylabel('NUR')
 axs[12].set_ylabel('PAT')
-
 f.tight_layout()
 plt.show()
+
+print(blocks)
