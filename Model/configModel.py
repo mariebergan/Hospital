@@ -7,11 +7,6 @@ from collections import Counter
 groups = ['ADM', 'MED', 'NUR', 'PAT']
 tab = {}
 
-for g1 in groups:
-    tab[g1] = {}
-    for g2 in groups:
-        tab[g1][g2] = []
-
 k_min = {'ADM': {'ADM': 4, 'MED': 0, 'NUR': 1, 'PAT': 0},
          'MED': {'ADM': 7, 'MED': 131, 'NUR': 23, 'PAT': 18},
          'NUR': {'ADM': 0, 'MED': 0, 'NUR': 58, 'PAT': 33},
@@ -22,14 +17,21 @@ k_max = {'ADM': {'ADM': 258, 'MED': 269, 'NUR': 1096, 'PAT': 151},
          'NUR': {'ADM': 454, 'MED': 446, 'NUR': 3056, 'PAT': 852},
          'PAT': {'ADM': 112, 'MED': 143, 'NUR': 803, 'PAT': 117}}
 
+k_sum = {'ADM': {'ADM': 558, 'MED': 459, 'NUR': 2596, 'PAT': 441},
+         'MED': {'ADM': 459, 'MED': 11320, 'NUR': 1769, 'PAT': 1471},
+         'NUR': {'ADM': 2596, 'MED': 1769, 'NUR': 25390, 'PAT': 6835},
+         'PAT': {'ADM': 441, 'MED': 1471, 'NUR': 6845, 'PAT': 418}}
 
 for g1 in groups:
+    tab[g1] = {}
     for g2 in groups:
+        tab[g1][g2] = []
+        
         if g1 == 'ADM':
             for ID in range(1, 9):
-                k = random.randint(k_min[g1][g2], k_max[g1][g2])
+                k = random.randint(k_min[g1][g2], k_max[g1][g2]) # summen av k for alle nodene skal bli 558, hvordan begrense dette?
                 for i in range(k):
-                    tab[g1][g2].append(ID)
+                    tab[g1][g2].append(ID) ### lengden på denne listen, som tilsvarer antall kontakter innad i ADM (ADM_ADM), må være på k_sum['ADM']['ADM'] = 558
                 random.shuffle(tab[g1][g2])
 
         elif g1 == 'MED':    
@@ -53,7 +55,7 @@ for g1 in groups:
                     tab[g1][g2].append(ID)
                 random.shuffle(tab[g1][g2])
 
-
+print(sorted(tab['ADM']['ADM']))
 contacts = np.zeros((76, 76), dtype = int)
 
 # diagonal
@@ -66,7 +68,7 @@ for g1 in groups:
             contacts[i, j] = 1
             contacts[j, i] = 1
 
-        else:
+        elif (i!=j):
             contacts[i, j] += 1
             contacts[j, i] += 1
 
@@ -78,11 +80,11 @@ for g1 in groups:
                 i = tab[g1][g2][x] 
                 j = tab[g2][g1][x] 
 
-                if contacts[i, j] == 0:
+                if (contacts[i, j]) == 0 and (i != j):
                     contacts[i, j] = 1
                     contacts[j, i] = 1
 
-                else:
+                elif (i!=j):
                     contacts[i, j] += 1
                     contacts[j, i] += 1
 
@@ -96,6 +98,7 @@ config_hm.set_title('Configuration Model')
 for x in [8, 19, 46]:
     config_hm.axhline(x, linewidth = 0.5, color = 'w')
     config_hm.axvline(x, linewidth = 0.5, color = 'w')
+
 
 # Cumulative degree distributions        
 degrees = {}
@@ -119,6 +122,9 @@ for g1 in groups:
             degrees['PAT'][g2].extend([0 for i in range(29-len(degrees['PAT'][g2]))])
 
         #degrees[g1][g2] = sorted(degrees[g1][g2])
+
+        # k_sum = sum(degrees[g1][g2])
+        # print(k_sum)
 
 plt.style.use('seaborn')
 
@@ -153,7 +159,6 @@ axs[8].set_ylabel('NUR')
 axs[12].set_ylabel('PAT')
 f.tight_layout()
 plt.show()
-
 
 
 

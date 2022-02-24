@@ -5,6 +5,8 @@ import seaborn as sns
 import matplotlib.pylab as plt
 
 ward_arr = np.zeros((76, 76), dtype = float)
+nonLogArr = np.zeros((76, 76), dtype = float)
+
 
 f = open('Data/weightedEdgeList.txt')
 
@@ -16,12 +18,21 @@ for line in f:
     Si = splitLine[2]
     Sj = splitLine[3]
     Wij = int(splitLine[4])
-    # ward_arr[i, j] = Wij
-    # ward_arr[j, i] = Wij
     ward_arr[i, j] = np.log(Wij)
     ward_arr[j, i] = np.log(Wij)
+    nonLogArr[i, j] = Wij
+    nonLogArr[j, i] = Wij
+
  
 f.close()
+
+# Heatmap nonLogArr
+nonLogArr = nonLogArr[1:76, 1:76]
+sns.heatmap(nonLogArr)
+print(nonLogArr[0:8, 0:8])
+plt.show()
+
+
 
 ward_arr = ward_arr + 1 # unngå verdier med 0 som man ikke kan ta log av
 
@@ -32,7 +43,7 @@ ward_hm.set_title('Ward')
 for x in [8, 19, 46]:
     ward_hm.axhline(x, linewidth = 1, color = 'w')
     ward_hm.axvline(x, linewidth = 1, color = 'w')
-plt.show()
+#plt.show()
 
 def status_heatmap(arr, title):
     hm = sns.heatmap(arr, vmin = 0, vmax = 6)
