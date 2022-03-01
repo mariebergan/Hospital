@@ -37,27 +37,32 @@ for g1 in groups:
             degrees['NUR'][g2].extend([0 for i in range(27-len(degrees['NUR'][g2]))])
         if g1 == 'PAT' and len(degrees['PAT'][g2]) < 29:
             degrees['PAT'][g2].extend([0 for i in range(29-len(degrees['PAT'][g2]))])
-
+    
+        degrees[g1][g2].sort()
 
 # Cumulative degree distributions
 plt.style.use('seaborn')
 f,((ax1, ax2, ax3, ax4), 
 (ax5, ax6, ax7, ax8),
 (ax9, ax10, ax11, ax12),
-(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (10, 7))
-f.suptitle('Cumulative degree distributions', fontsize = 'x-large') 
+(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (10, 7.5))
+f.suptitle('Empirical cumulative degree distributions', fontsize = 'x-large') 
 f.supylabel('Pk')
 f.supxlabel('k')
 axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
+logx_axs = [ax1, ax2, ax3, ax5, ax11, ax13]
+logy_axs = [ax2, ax4, ax5, ax7, ax8, ax9, ax10, ax12, ax14, ax15, ax16]
 
 i = 0
 for g1 in groups:
     for g2 in groups:
-        x = np.cumsum(degrees[g1][g2])
+        x = degrees[g1][g2]
         y = np.arange(len(degrees[g1][g2]))/float(len(degrees[g1][g2]))
         axs[i].plot(x, 1-y)
-        # axs[i].semilogy()
-        # axs[i].semilogx()
+        for ax in logx_axs:
+            ax.semilogx()
+        for ax in logy_axs:
+            ax.semilogy()
         i += 1
 
 axs[12].set_xlabel('ADM')
@@ -70,8 +75,3 @@ axs[8].set_ylabel('NUR')
 axs[12].set_ylabel('PAT')
 f.tight_layout()
 plt.show()
-
-
-
-
-

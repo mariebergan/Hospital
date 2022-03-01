@@ -31,6 +31,7 @@ for g1 in groups:
             k = random.randint(k_min[g1][g2], k_max[g1][g2]) 
             stubs[ID] += k
             degrees[g1][g2].append(k)
+        degrees[g1][g2].sort()
 
 contacts = {}
 for i in range(75):
@@ -63,23 +64,6 @@ for x in range(int((sum(list(stubs)))/2)):
     contactsArray[i, j] += 1
     contactsArray[j, i] += 1
 
-print(contacts)
-
-# Gradsfordeling lenkevekter 
-k = []
-for contacts in contactsArray:
-    nodeContacts = sum(contacts)
-    k.append(nodeContacts)
-
-k.sort()
-mu = sum(k)/len(k)
-pmf = poisson.pmf(k, mu)
-plt.plot(k, pmf)
-plt.xlabel('Degree')
-plt.ylabel('Probability')
-plt.title('Config model')
-plt.show()
-
 # Heatmap
 config_hm = sns.heatmap(contactsArray, vmin = 1, vmax = 8)
 config_hm.set_title('Preferential Attachement Config Model')
@@ -101,7 +85,7 @@ axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14
 i = 0
 for g1 in groups:
     for g2 in groups:
-        x = np.cumsum(degrees[g1][g2])
+        x = degrees[g1][g2]
         y = np.arange(len(degrees[g1][g2]))/float(len(degrees[g1][g2]))
         axs[i].plot(x, 1-y)
         # axs[i].semilogy()
@@ -117,4 +101,5 @@ axs[4].set_ylabel('MED')
 axs[8].set_ylabel('NUR')
 axs[12].set_ylabel('PAT')
 f.tight_layout()
+plt.show()
 

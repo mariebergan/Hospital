@@ -24,11 +24,22 @@ for contacts in contactsArray:
     k.append(nodeContacts)
 
 k.sort()
-print(k)
-mu = sum(k)/len(k)
-pmf = poisson.pmf(k, mu)
-plt.plot(k, pmf)
+# print(k)
+# mu = sum(k)/len(k)
+# pmf = poisson.pmf(k, mu)
+# cdf = poisson.cdf(k, mu)
+# plt.plot(k, 1-cdf)
+# plt.xlabel('Degree')
+# plt.ylabel('Probability')
+# plt.title('Empirical')
+
+
+x = k
+y = np.arange(len(k))/float(len(k))
+plt.plot(x, 1-y)
 plt.xlabel('Degree')
-plt.ylabel('Probability')
-plt.title('Empirical')
+plt.ylabel('Log frequency')
+plt.semilogy()
+#plt.semilogx()
+plt.title('Ward')
 plt.show()
