@@ -20,22 +20,9 @@ for line in f:
     Wij = int(splitLine[4])
     ward_arr[i, j] = np.log(Wij)
     ward_arr[j, i] = np.log(Wij)
-    nonLogArr[i, j] = Wij
-    nonLogArr[j, i] = Wij
-
- 
 f.close()
 
-# Heatmap nonLogArr
-nonLogArr = nonLogArr[1:76, 1:76]
-sns.heatmap(nonLogArr)
-print(nonLogArr[0:8, 0:8])
-plt.show()
-
-
-
 ward_arr = ward_arr + 1 # unngå verdier med 0 som man ikke kan ta log av
-
 # heatmap for the entire ward
 ward_arr = ward_arr[1:76, 1:76]
 ward_hm = sns.heatmap(ward_arr, vmin = 1, vmax = 8)

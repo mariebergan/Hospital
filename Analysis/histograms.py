@@ -26,10 +26,8 @@ for line in edgeList:
     j = int(splitLine[1])
     Si = splitLine[2]
     Sj = splitLine[3]
-
     count[i][Sj] += 1
     count[j][Si] += 1
-
 edgeList.close()
 
 # creates lists with number of contacts each node in a category has with each category
@@ -75,7 +73,6 @@ for node in count:
         PN.append(count[x]['NUR'])
         PP.append(count[x]['PAT'])
 
-plt.style.use('seaborn')
 def hist(list, title, y, x):
     plt.hist(list, bins = 20, edgecolor = 'black')
     plt.title(title)
@@ -84,7 +81,7 @@ def hist(list, title, y, x):
     plt.show()
 
 # use created hist function to create histogram for the indicated list
-# hist(AA, 'ADM-ADM', '# ADM', '# contacts with ADM')
+hist(AA, 'ADM-ADM', '# ADM', '# contacts with ADM')
 # hist(AM, 'ADM-MED', '# ADM', '# contacts with MED')
 # hist(AN, 'ADM-NUR', '# ADM', '# contacts with NUR')
 # hist(AP, 'ADM-PAT', '# ADM', '# contacts with PAT')

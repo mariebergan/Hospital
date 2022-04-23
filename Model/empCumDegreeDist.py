@@ -21,28 +21,30 @@ for line in edgeList:
     tab[Sj][Si].append(j)
 edgeList.close()
 
-degrees = {}
+empDegrees = {}
 for g1 in groups:
-    degrees[g1] = {}
+    empDegrees[g1] = {}
     for g2 in groups:
         occurences = Counter(tab[g1][g2])
-        degrees[g1][g2] = list(occurences.values())
+        empDegrees[g1][g2] = list(occurences.values())
         # add nodes with k = 0
-        if g1 == 'ADM' and len(degrees['ADM'][g2]) < 8:
-            degrees['ADM'][g2].extend([0 for i in range(8-len(degrees['ADM'][g2]))])
-        if g1 == 'MED' and len(degrees['MED'][g2]) < 11:
-            degrees['MED'][g2].extend([0 for i in range(11-len(degrees['MED'][g2]))])
-        if g1 == 'NUR' and len(degrees['NUR'][g2]) < 27:
-            degrees['NUR'][g2].extend([0 for i in range(27-len(degrees['NUR'][g2]))])
-        if g1 == 'PAT' and len(degrees['PAT'][g2]) < 29:
-            degrees['PAT'][g2].extend([0 for i in range(29-len(degrees['PAT'][g2]))])
-        degrees[g1][g2].sort()
+        if g1 == 'ADM' and len(empDegrees['ADM'][g2]) < 8:
+            empDegrees['ADM'][g2].extend([0 for i in range(8-len(empDegrees['ADM'][g2]))])
+        if g1 == 'MED' and len(empDegrees['MED'][g2]) < 11:
+            empDegrees['MED'][g2].extend([0 for i in range(11-len(empDegrees['MED'][g2]))])
+        if g1 == 'NUR' and len(empDegrees['NUR'][g2]) < 27:
+            empDegrees['NUR'][g2].extend([0 for i in range(27-len(empDegrees['NUR'][g2]))])
+        if g1 == 'PAT' and len(empDegrees['PAT'][g2]) < 29:
+            empDegrees['PAT'][g2].extend([0 for i in range(29-len(empDegrees['PAT'][g2]))])
+        empDegrees[g1][g2].sort()
+
+print(empDegrees)
 
 k_tot = {}
 for g1 in groups:
     k_tot[g1] = {}
     for g2 in groups:
-        tot = sum(degrees[g1][g2]) 
+        tot = sum(empDegrees[g1][g2]) 
         k_tot[g1][g2] = tot
 
 # Cumulative degree distributions
@@ -50,8 +52,8 @@ plt.style.use('seaborn')
 f,((ax1, ax2, ax3, ax4), 
 (ax5, ax6, ax7, ax8),
 (ax9, ax10, ax11, ax12),
-(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (10, 7.5))
-f.suptitle('Cumulative degree distributions P(X < x)', fontsize = 'x-large') 
+(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (12, 7.5))
+f.suptitle('Cumulative degree distributions', fontsize = 'x-large') 
 f.supylabel('Frequency')
 f.supxlabel('Degree')
 axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
@@ -61,8 +63,8 @@ logy_axs = [ax2, ax4, ax5, ax7, ax8, ax9, ax10, ax12, ax14, ax15, ax16]
 i = 0
 for g1 in groups:
     for g2 in groups:
-        x = degrees[g1][g2]
-        y = np.arange(len(degrees[g1][g2]))/float(len(degrees[g1][g2]))
+        x = empDegrees[g1][g2]
+        y = np.arange(len(empDegrees[g1][g2]))/float(len(empDegrees[g1][g2]))
         axs[i].plot(x, 1-y)
         for ax in logx_axs:
             ax.semilogx()
@@ -79,5 +81,5 @@ axs[4].set_ylabel('MED')
 axs[8].set_ylabel('NUR')
 axs[12].set_ylabel('PAT')
 f.tight_layout()
-plt.show()
+#plt.show()
 

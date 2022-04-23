@@ -9,7 +9,6 @@ class Person:
         self.contacts = [] # list of tuples with contact data for the given Person object
 
     def create_contacts(self, sizes, hours): # sizes = [8, 11, 27, 29]
-
         self.people = {}
         self.people['ADM'] = range(max(0, self.ID), sizes[0]) 
         self.people['MED'] = range(sizes[0], sizes[0]+sizes[1])
