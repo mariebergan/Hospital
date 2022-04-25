@@ -253,12 +253,12 @@ def timedRun(contactsArray, attrs, baseP, startDay, runDays):
     ageLog = []
     endDay = startDay + runDays               
     
-    while day < endDay:
+    while day < endDay: 
         day += 1
         
         dailyInfs = 0
 
-        cont, dailyInfs, ageCount = systemDay(contactsArray[day%4], attrs, baseP, day, startDay) # [day%4]
+        cont, dailyInfs, ageCount = systemDay(contactsArray[day%4], attrs, baseP, day, startDay) # contactsArray[day%4]
         
         stateLog.append(countState(attrs, stateList))
         infLog.append(dailyInfs)
@@ -276,5 +276,3 @@ def seedState(attrs, node):
     attrs[node]['relInfectivity'] = 3.0
     if attrs[node]['age'] < 13: 
         attrs[node]['relInfectivity'] = 0.3
-
-

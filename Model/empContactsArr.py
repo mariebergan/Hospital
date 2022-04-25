@@ -20,16 +20,16 @@ for line in temporalEdgeList:
     contactsArray[i][j] += 1
     contactsArray[j][i] += 1
 
-    if t < secondsInDay:
+    if t <= secondsInDay:
         day1[i][j] += 1
         day1[j][i] += 1
-    elif t < (secondsInDay*2):
+    elif t <= (secondsInDay*2):
         day2[i][j] += 1
         day2[j][i] += 1
-    elif t < (secondsInDay*3):
+    elif t <= (secondsInDay*3):
         day3[i][j] += 1
         day3[j][i] += 1
-    else:
+    elif t <= (secondsInDay*4):
         day4[i][j] += 1
         day4[j][i] += 1
     

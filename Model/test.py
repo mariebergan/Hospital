@@ -2,9 +2,9 @@ from random import shuffle
 import numpy as np
 import random
 
-a = {1: {'state': 'S', 'age' : 20}, 1: {'state': 'R', 'age' : 30} }
+a = {0: 0, 1:0, 2:0}
 
-b = [2,4,6,8]
+for i in range(3):
+    a[i] += 1
 
-for x in b:
-    print(x)
+print(a)

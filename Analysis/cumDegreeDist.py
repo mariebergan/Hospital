@@ -10,7 +10,6 @@ for g1 in groups:
         tab[g1][g2] = []
 
 edgeList = open('Data/edgeList.txt')
-next(edgeList)
 for line in edgeList:
     splitLine = line.rstrip().split('\t')
     i = int(splitLine[0])

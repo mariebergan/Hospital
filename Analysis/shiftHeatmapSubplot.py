@@ -34,23 +34,13 @@ def heatmap(file, axx):
     hm.axvline(19, linewidth = 0.5, color = 'w')
     hm.axvline(46, linewidth = 0.5, color = 'w')
 
-# subplot with dim = (5, 3)
+
+# subplot 
 f,((ax1, ax2, ax3), 
 (ax4, ax5, ax6),
 (ax7, ax8, ax9),
 (ax10, ax11, ax12),
-(ax13, ax14, ax15)) = plt.subplots(5, 3, sharey = True, sharex = True, figsize = (5, 5))
-
-ax1.set_title('Morning')
-ax2.set_title('Afternoon')
-ax3.set_title('Night')
-
-ax1.set_ylabel('Monday')
-# ylabel kommer ikke opp ??
-ax4.set_ylabel('Tuesday') 
-ax7.set_ylabel('Wednesday')
-ax10.set_ylabel('Thursday')
-ax13.set_ylabel('Friday')
+(ax13, ax14, ax15)) = plt.subplots(5, 3, sharey = True, sharex = True, figsize = (8, 10))
 
 # creates heatmaps for the shifts at indicated ax
 mon_afternoon = heatmap('Data/Shifts/mon_afternoon.txt', ax2)
@@ -66,4 +56,15 @@ thur_afternoon = heatmap('Data/Shifts/thur_afternoon.txt', ax11)
 thur_night = heatmap('Data/Shifts/thur_night.txt', ax12)
 fri_morning = heatmap('Data/Shifts/fri_morning.txt', ax13)
 
+ax1.set_title('Morning')
+ax2.set_title('Afternoon')
+ax3.set_title('Night')
+
+ax1.set_ylabel('Monday')
+ax4.set_ylabel('Tuesday') 
+ax7.set_ylabel('Wednesday')
+ax10.set_ylabel('Thursday')
+ax13.set_ylabel('Friday')
+#plt.box(False) remove frame around empty plots
+f.tight_layout()
 plt.show()

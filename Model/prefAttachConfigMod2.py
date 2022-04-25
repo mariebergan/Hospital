@@ -335,58 +335,58 @@ def plotDist(g1, g2, empDist):
         y.append(1-float(i)/float(n))
     return x, y
 
-# Heatmap
-contactsArrayBkp = contactsArray
-contactsArray = contactsArray+1
-contactsArray = np.log(contactsArray)
-config_hm = sns.heatmap(contactsArray, vmin = 1, vmax = 8)
-config_hm.set_title('Simulated heatmap')
-for x in [8, 19, 46]:
-    config_hm.axhline(x, linewidth = 1, color = 'w')
-    config_hm.axvline(x, linewidth = 1, color = 'w')
+# # Heatmap
+# contactsArrayBkp = contactsArray
+# contactsArray = contactsArray+1
+# contactsArray = np.log(contactsArray)
+# config_hm = sns.heatmap(contactsArray, vmin = 1, vmax = 8)
+# config_hm.set_title('Simulated heatmap')
+# for x in [8, 19, 46]:
+#     config_hm.axhline(x, linewidth = 1, color = 'w')
+#     config_hm.axvline(x, linewidth = 1, color = 'w')
 
-# Cumulative degree distributions subplot
-#plt.style.use('seaborn')
-f,((ax1, ax2, ax3, ax4),
-(ax5, ax6, ax7, ax8),
-(ax9, ax10, ax11, ax12),
-(ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (12, 7.5))
-f.suptitle('Cumulative degree distributions', fontsize = 'x-large')
-f.supylabel('Frequency')
-f.supxlabel('Degree ')
-axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
-logx_axs = [ax1, ax2, ax3, ax5, ax11, ax13]
-logy_axs = [ax2, ax4, ax5, ax7, ax8, ax9, ax10, ax12, ax14, ax15, ax16]
-i = 0
+# # Cumulative degree distributions subplot
+# #plt.style.use('seaborn')
+# f,((ax1, ax2, ax3, ax4),
+# (ax5, ax6, ax7, ax8),
+# (ax9, ax10, ax11, ax12),
+# (ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (12, 7.5))
+# f.suptitle('Cumulative degree distributions', fontsize = 'x-large')
+# f.supylabel('Frequency')
+# f.supxlabel('Degree ')
+# axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
+# logx_axs = [ax1, ax2, ax3, ax5, ax11, ax13]
+# logy_axs = [ax2, ax4, ax5, ax7, ax8, ax9, ax10, ax12, ax14, ax15, ax16]
+# i = 0
 
-for g1 in groups:
-    for g2 in groups:
-        # Empirical
-        x = empDegrees[g1][g2]
-        y = np.arange(len(empDegrees[g1][g2]))/float(len(empDegrees[g1][g2]))
-        axs[i].plot(x, 1-y)
-        # Simulated
-        x2 = simDegrees[g1][g2]
-        y2 = np.arange(len(simDegrees[g1][g2]))/float(len(simDegrees[g1][g2]))
-        axs[i].plot(x2, 1-y2)
-        # Distributions
-        x3, y3 = plotDist(g1, g2, empStubs)
-        axs[i].plot(x3, y3, '--')
+# for g1 in groups:
+#     for g2 in groups:
+#         # Empirical
+#         x = empDegrees[g1][g2]
+#         y = np.arange(len(empDegrees[g1][g2]))/float(len(empDegrees[g1][g2]))
+#         axs[i].plot(x, 1-y)
+#         # Simulated
+#         x2 = simDegrees[g1][g2]
+#         y2 = np.arange(len(simDegrees[g1][g2]))/float(len(simDegrees[g1][g2]))
+#         axs[i].plot(x2, 1-y2)
+#         # Distributions
+#         x3, y3 = plotDist(g1, g2, empStubs)
+#         axs[i].plot(x3, y3, '--')
 
-        for ax in logx_axs:
-            ax.semilogx()
-        for ax in logy_axs:
-            ax.semilogy()
-        i += 1
-f.legend(['Empirical', 'Simulated', 'Distribution'])
-axs[12].set_xlabel('ADM')
-axs[13].set_xlabel('MED')
-axs[14].set_xlabel('NUR')
-axs[15].set_xlabel('PAT')
-axs[0].set_ylabel('ADM')
-axs[4].set_ylabel('MED')
-axs[8].set_ylabel('NUR')
-axs[12].set_ylabel('PAT')
-f.tight_layout()
-#plt.show()
+#         for ax in logx_axs:
+#             ax.semilogx()
+#         for ax in logy_axs:
+#             ax.semilogy()
+#         i += 1
+# f.legend(['Empirical', 'Simulated', 'Distribution'])
+# axs[12].set_xlabel('ADM')
+# axs[13].set_xlabel('MED')
+# axs[14].set_xlabel('NUR')
+# axs[15].set_xlabel('PAT')
+# axs[0].set_ylabel('ADM')
+# axs[4].set_ylabel('MED')
+# axs[8].set_ylabel('NUR')
+# axs[12].set_ylabel('PAT')
+# f.tight_layout()
+# plt.show()
 #plt.savefig('Figs/fig'+sys.argv[1]+'.png')

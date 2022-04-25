@@ -4,11 +4,9 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pylab as plt
 
-ward_arr = np.zeros((76, 76), dtype = int)
+ward_arr = np.zeros((75, 75), dtype = int)
 
 f =  open('Data/weightedEdgeList.txt')
-
-next(f)
 for line in f:
     splitLine = line.rstrip().split('\t')
     i = int(splitLine[0])
