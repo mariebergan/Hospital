@@ -1,8 +1,8 @@
 # Set base probabilities
 baseP = {}
 
-# inf probabilities
-p = 0.2
+# Infection probabilities
+p = 0.005
 baseP['inf'] = {'ADM': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},
                 'MED': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},
                 'NUR': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},
@@ -15,7 +15,7 @@ baseP['rec'] = 0.1
 baseP['inc'] = 1
 
 # Chance to develop symptoms
-baseP['S'] = {0: 0.5, 10: 0.5, 20: 0.5, 30:0.5, 40:0.5, 50: 0.5, 60: 0.5, 70: 0.5, 80: 0.5} #Placeholder
+baseP['S'] = {0: 0.5, 10: 0.5, 20: 0.5, 30:0.5, 40:0.5, 50: 0.5, 60: 0.5, 70: 0.5, 80: 0.5} 
 
 # Chance to hospitalize
 baseP['H'] = {'B': 0.0001, 'A1': 0.02, 'A2':0.08, 'E1':0.15, 'E2': 0.184}
@@ -38,20 +38,15 @@ for ageGrp in baseP['Hage']:
 # ICU per hospitalization by age bracket
 baseP['ICUage'] = {0: 0.3, 10: 0.3, 20: 0.3, 30: 0.3, 40: 0.3, 50: 0.3, 60: 0.3, 70: 0.3, 80: 0.3}
 
-# HDeath per case by age bracket
+# Death per case by age bracket
 baseP['Dage'] = {0: 1.61*pow(10, -5), 10: 6.95*pow(10, -5), 20: 3.09*pow(10, -4), 30: 8.44*pow(10, -4), 40: 1.61*pow(10, -3), 50: 5.95*pow(10, -3), 60: 0.0193, 70: 0.0428, 80: 0.078}
 
 # Death rate by age group
 baseP['DRage'] = {}
-
 for ageGrp in baseP['Hage']:
     baseP['DRage'][ageGrp] = baseP['Dage'][ageGrp]/(baseP['Hage'][ageGrp])
   
-baseP['NHDage'] = {60: baseP['DRage'][60], 70: baseP['DRage'][70], 80: baseP['DRage'][80]}
-
-
-stateInf = {}
-
+# State change duration
 dur = {}
 dur['I-E'] = 5
 dur['PS-I'] = 2

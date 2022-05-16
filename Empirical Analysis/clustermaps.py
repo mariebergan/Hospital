@@ -21,6 +21,7 @@ f.close()
 
 def clustermap(arr, title):
     sns.clustermap(arr, vmin = 0, vmax = 6, figsize=(8, 6)).fig.suptitle(title) 
+    plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/Emp_figs/clustermap' + title + '.png')
     plt.show()
 
 clustermap(ward_arr[0:8, 0:8], 'ADM')

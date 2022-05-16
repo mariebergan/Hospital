@@ -40,7 +40,7 @@ f,((ax1, ax2, ax3),
 (ax4, ax5, ax6),
 (ax7, ax8, ax9),
 (ax10, ax11, ax12),
-(ax13, ax14, ax15)) = plt.subplots(5, 3, sharey = True, sharex = True, figsize = (8, 10))
+(ax13, ax14, ax15)) = plt.subplots(5, 3, sharey = True, sharex = True, figsize = (7.5, 10))
 
 # creates heatmaps for the shifts at indicated ax
 mon_afternoon = heatmap('Data/Shifts/mon_afternoon.txt', ax2)
@@ -67,4 +67,5 @@ ax10.set_ylabel('Thursday')
 ax13.set_ylabel('Friday')
 #plt.box(False) remove frame around empty plots
 f.tight_layout()
+plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/Emp_figs/shiftHeatmaps.png')
 plt.show()

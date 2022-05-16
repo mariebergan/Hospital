@@ -23,17 +23,20 @@ def readModel(contactsArray):
 
         if ID < 8:
             attrs[ID]['status'] = 'ADM'
+            attrs[ID]['HCW'] = False
             attrs[ID]['age'] = random.randint(22, 67)
         elif ID < 19:
             attrs[ID]['status'] = 'MED'
+            attrs[ID]['HCW'] = True
             attrs[ID]['age'] = random.randint(25, 67)
-
         elif ID < 46:
             attrs[ID]['status'] = 'NUR'
+            attrs[ID]['HCW'] = True
             attrs[ID]['age'] = random.randint(22, 67)
         else:
-            attrs[ID]['status'] = 'PAT'  
-            attrs[ID]['age'] = random.randint(1, 100)
+            attrs[ID]['status'] = 'PAT' 
+            attrs[ID]['HCW'] = False 
+            attrs[ID]['age'] = random.randint(70, 100)
         attrs[ID]['decade'] = min(attrs[ID]['age']-attrs[ID]['age']%10, 80)
 
         if attrs[ID]['age'] < 19:
@@ -210,13 +213,12 @@ def systemDay(contactsArray, attrs, p, day, startDay):
     dailyInfs = 0  
     infNodes = infectDay(contactsArray, attrs, p, day)
     dailyInfs += len(infNodes)
-    ageCount = countAge(attrs)
       
     for node in attrs:
         if (attrs[node]['sick'] or (attrs[node]['state'] == 'E')):
             stateFunction(attrs[node]['state'])(node, attrs, p, day)
             cont = True
-    return cont, dailyInfs, ageCount
+    return cont, dailyInfs
 
 def countState(attrs, stateList):
     stateCount = {}
@@ -225,17 +227,18 @@ def countState(attrs, stateList):
     for node in attrs:
         stateCount[attrs[node]['state']] += 1
     return stateCount
-    
 
-def countAge(attrs):
-    ageCount = {}
+def countAbsence(attrs):
+    absenceCount = 0
+    HCW = []
+    isoNodes = {}
     for node in attrs:
-        if attrs[node]['state'] == 'E':
-            if (attrs[node]['decade'] not in ageCount):
-                ageCount[attrs[node]['decade']] = 1
-            else:
-                ageCount[attrs[node]['decade']] += 1
-    return ageCount
+        if attrs[node]['HCW']:
+            HCW.append(node)
+    for node in HCW:
+        if attrs[node]['present'] == False:
+            absenceCount += 1
+    return absenceCount
 
 def getInfIDs(attrs):
     infIDs = []
@@ -244,32 +247,78 @@ def getInfIDs(attrs):
             infIDs.append(ID)
     return infIDs
 
-def timedRun(contactsArray, attrs, baseP, startDay, runDays):
+def testNode(node, attrs, testEff):
+    if attrs[node]['state'] in {'Ia', 'Ip'}:
+        return random.random() < testEff # 20% sanns for falsk negativ
+    else: 
+        return random.random() < 0 # 0% sanns for falsk positiv
+
+def timedIsolation(node, attrs, day):
+    for day in range(day, (day + 4)):
+        attrs[node]['present'] = False
+
+def testAll(attrs, day, startDay, runDays):
+    testEff = 0.8
+    testDays = list(range(startDay, runDays, 7))
+    if day in testDays:
+        for node in attrs:
+            if attrs[node]['present']:
+                testResult = testNode(node, attrs, testEff)
+                if testResult == True:
+                    timedIsolation(node, attrs, day)
+
+def timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing):
     cont = 1
     day = startDay
     stateLog = []
+    absenceLog = [] 
     infLog = []
-    ageLog = []
     endDay = startDay + runDays               
     
     while day < endDay:
         day += 1
-        
-        dailyInfs = 0
+        print(day)
 
-        cont, dailyInfs, ageCount = systemDay(contactsArray, attrs, baseP, day, startDay) # [day%4]
-        
+        if testing == True:
+            isoNodes = testAll(attrs, day, startDay, runDays)
+
+        dailyInfs = 0
+        cont, dailyInfs = systemDay(contactsArray[day%4], attrs, baseP, day, startDay)
         stateLog.append(countState(attrs, stateList))
+        absenceLog.append(countAbsence(attrs))
         infLog.append(dailyInfs)
-        ageLog.append(ageCount)
+
+    infIDs = getInfIDs(attrs)
+    
+    return stateLog, absenceLog
+
+def timedRun_sim(contactsArray, attrs, baseP, startDay, runDays, testing):
+    cont = 1
+    day = startDay
+    stateLog = []
+    absenceLog = [] 
+    infLog = []
+    endDay = startDay + runDays               
+    
+    while day < endDay:
+        day += 1
+
+        if testing == True:
+            testAll(attrs, day, startDay, runDays)
+
+        dailyInfs = 0
+        cont, dailyInfs = systemDay(contactsArray, attrs, baseP, day, startDay)
+        stateLog.append(countState(attrs, stateList))
+        absenceLog.append(countAbsence(attrs))
+        infLog.append(dailyInfs)
     
     infIDs = getInfIDs(attrs)
     
-    return stateLog, infLog, ageLog, day, infIDs
+    return stateLog, absenceLog
 
 def seedState(attrs, n): 
     for node in random.sample(attrs.keys(), n):
-        attrs[node]['state'] = 'Ip'
+        attrs[node]['state'] = 'Ip' # seed state = presymptomatic
         attrs[node]['nextState'] = 'Is'
         attrs[node]['nextDay'] = 1+np.random.poisson(dur['PS-I'])
         attrs[node]['sick'] = True

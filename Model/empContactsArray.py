@@ -1,6 +1,6 @@
 import numpy as np
 
-contactsArray = np.zeros((75, 75), int)
+empContactsArray = np.zeros((75, 75), int)
 day1 = np.zeros((75, 75), int)
 day2 = np.zeros((75, 75), int)
 day3 = np.zeros((75, 75), int)
@@ -13,12 +13,12 @@ next(temporalEdgeList)
 for line in temporalEdgeList:
     splitLine = line.rstrip().split('\t')
     t = int(splitLine[0])
-    i = int(splitLine[1])-1 # slik at ID starter på 0
-    j = int(splitLine[2])-1
+    i = int(splitLine[1])
+    j = int(splitLine[2])
     Si = splitLine[3]
     Sj = splitLine[4]
-    contactsArray[i][j] += 1
-    contactsArray[j][i] += 1
+    empContactsArray[i][j] += 1
+    empContactsArray[j][i] += 1
 
     if t <= secondsInDay:
         day1[i][j] += 1
@@ -35,5 +35,6 @@ for line in temporalEdgeList:
     
 temporalEdgeList.close()
 
-empContactArrays = [day1, day2, day3, day4]
+empDailyContactArrays = [day1, day2, day3, day4]
+
 

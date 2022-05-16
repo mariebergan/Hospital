@@ -5,11 +5,10 @@ from InitializeParams import *
 stateList = ['S', 'E', 'Ia', 'Ip', 'Is', 'R', 'H', 'ICU', 'D']
 
 #Initialize full model
-def initModel(contactsArray, baseP, seedNode):
+def initModel(contactsArray, baseP, seedNode, state):
     attrs = readModel(contactsArray)
     
-    seedState(attrs, seedNode)
-
+    seedState(attrs, seedNode, state)
 
     return attrs
 
@@ -21,6 +20,7 @@ def readModel(contactsArray):
         attrs[ID]['present'] = True 
         attrs[ID]['state'] = 'S'
         attrs[ID]['sick'] = False 
+        attrs[ID]['infected'] = 0
 
         if ID < 8:
             attrs[ID]['status'] = 'ADM'
@@ -56,9 +56,10 @@ def infectNode(attrs, node, day):
     attrs[node]['nextDay'] = day+1+np.random.poisson(dur['I-E'])  
 
 def infectDay(contactsArray, attrs, p, day):    
-    infNodes = []  
+    infNodes = [] # nodes that get infected
     susIDs = []
     sickIDs = []
+    
     for i in range(75):
         if attrs[i]['state'] == 'S':
             susIDs.append(i)
@@ -70,14 +71,16 @@ def infectDay(contactsArray, attrs, p, day):
             if attrs[i]['present'] and attrs[j]['present']:
                 n = contactsArray[i][j]
                 p1 = p['inf'][attrs[i]['status']][attrs[j]['status']] 
-                infP = 1-((1-p1)**(n*attrs[i]['relInfectivity'])) # gange n med relInf
+                infP = 1-((1-p1)**(n*attrs[i]['relInfectivity'])) 
                 if random.random() < infP:
                     if attrs[i]['state'] == 'S':
                         infectNode(attrs, i, day)
-                        infNodes.append(i) 
+                        infNodes.append(i)
+                        attrs[j]['infected'] += 1 
                     else:
                         infectNode(attrs, j, day)
                         infNodes.append(j) 
+                        attrs[i]['infected'] += 1
 
     return infNodes
 
@@ -245,34 +248,72 @@ def getInfIDs(attrs):
             infIDs.append(ID)
     return infIDs
 
-def timedRun(contactsArray, attrs, baseP, startDay, runDays):
+def timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, seedNode):
     cont = 1
     day = startDay
     stateLog = []
     infLog = []
     ageLog = []
-    endDay = startDay + runDays               
+    endDay = startDay + runDays
+    cumInfected = []  
     
     while day < endDay: 
         day += 1
-        
         dailyInfs = 0
-
         cont, dailyInfs, ageCount = systemDay(contactsArray[day%4], attrs, baseP, day, startDay) # contactsArray[day%4]
-        
         stateLog.append(countState(attrs, stateList))
         infLog.append(dailyInfs)
         ageLog.append(ageCount)
     
-    infIDs = getInfIDs(attrs)
-    
-    return stateLog, infLog, ageLog, day, infIDs
+        infectedStates = ['Ia', 'Ip', 'Is', 'H', 'ICU']
+        if attrs[seedNode]['state'] in infectedStates:
+            cumInfected.append(attrs[seedNode]['infected'])
+    infBySeedNode = max(cumInfected)
 
-def seedState(attrs, node): 
-    attrs[node]['state'] = 'Ip'
-    attrs[node]['nextState'] = 'Is'
-    attrs[node]['nextDay'] = 1+np.random.poisson(dur['PS-I'])
-    attrs[node]['sick'] = True
-    attrs[node]['relInfectivity'] = 3.0
-    if attrs[node]['age'] < 13: 
-        attrs[node]['relInfectivity'] = 0.3
+    infIDs = getInfIDs(attrs) 
+    
+    return stateLog, infIDs, infBySeedNode
+
+def timedRun_sim(contactsArray, attrs, baseP, startDay, runDays, seedNode):
+    cont = 1
+    day = startDay
+    stateLog = []
+    infLog = []
+    ageLog = []
+    endDay = startDay + runDays
+    cumInfected = []  
+    
+    while day < endDay: 
+        day += 1
+        dailyInfs = 0
+        cont, dailyInfs, ageCount = systemDay(contactsArray, attrs, baseP, day, startDay) # contactsArray[day%4]
+        stateLog.append(countState(attrs, stateList))
+        infLog.append(dailyInfs)
+        ageLog.append(ageCount)
+    
+        infectedStates = ['Ia', 'Ip', 'Is', 'H', 'ICU']
+        if attrs[seedNode]['state'] in infectedStates:
+            cumInfected.append(attrs[seedNode]['infected'])
+    infBySeedNode = max(cumInfected)
+
+    infIDs = getInfIDs(attrs) 
+    
+    return stateLog, infIDs, infBySeedNode
+
+def seedState(attrs, node, state):
+    if state == 'Ip': 
+        attrs[node]['state'] = 'Ip'
+        attrs[node]['nextState'] = 'Is'
+        attrs[node]['nextDay'] = 1+np.random.poisson(dur['PS-I'])
+        attrs[node]['sick'] = True
+        attrs[node]['relInfectivity'] = 3.0
+        if attrs[node]['age'] < 13: 
+            attrs[node]['relInfectivity'] = 0.3
+    elif state == 'Ia':
+        attrs[node]['state'] = 'Ia'
+        attrs[node]['nextState'] = 'R'
+        attrs[node]['nextDay'] = 1+np.random.poisson(dur['AS-R'])
+        attrs[node]['sick'] = True
+        attrs[node]['relInfectivity'] = 0.3 
+
+    

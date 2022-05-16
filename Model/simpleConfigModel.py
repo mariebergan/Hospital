@@ -142,7 +142,7 @@ axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14
 i = 0
 for g1 in groups:
     for g2 in groups:
-        x = np.cumsum(degrees[g1][g2])
+        x = sorted(degrees[g1][g2])
         y = np.arange(len(degrees[g1][g2]))/float(len(degrees[g1][g2]))
         axs[i].plot(x, 1-y)
         # axs[i].semilogy()

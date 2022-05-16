@@ -1,5 +1,6 @@
 # Creates ward heatmap, status heatmaps and 2-and-2 combination heatmaps for the entire study period 
 
+from matplotlib.pyplot import ylabel
 import numpy as np
 import seaborn as sns
 import matplotlib.pylab as plt
@@ -22,10 +23,13 @@ f.close()
 ward_arr = ward_arr + 1 # unngå verdier med 0 som man ikke kan ta log av
 # heatmap for the entire ward
 ward_hm = sns.heatmap(ward_arr, vmin = 1, vmax = 8)
-ward_hm.set_title('Ward')
+plt.xlabel('ADM     MED                NUR                            PAT              ')
+plt.ylabel('              PAT                         NUR              MED    ADM')
 for x in [8, 19, 46]:
     ward_hm.axhline(x, linewidth = 1, color = 'w')
     ward_hm.axvline(x, linewidth = 1, color = 'w')
+plt.tight_layout
+plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/Emp_figs/wardHeatmap.png')
 plt.show()
 
 def status_heatmap(arr, title):

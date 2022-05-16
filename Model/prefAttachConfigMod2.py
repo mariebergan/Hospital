@@ -45,17 +45,17 @@ for g1 in groups:
 #################
 
 # Getting number of contacts actually created between a node and each other group
-def getActualContacts(i, contactsArray):
+def getActualContacts(i, simContactsArray):
     conts = {'ADM': 0, 'MED': 0, 'NUR': 0, 'PAT': 0}
     for j in range(75):
         if j < 8:
-            conts['ADM'] += contactsArray[i][j]
+            conts['ADM'] += simContactsArray[i][j]
         elif j < 19:
-            conts['MED'] += contactsArray[i][j]
+            conts['MED'] += simContactsArray[i][j]
         elif j < 46:
-            conts['NUR'] += contactsArray[i][j]
+            conts['NUR'] += simContactsArray[i][j]
         else:
-            conts['PAT'] += contactsArray[i][j]
+            conts['PAT'] += simContactsArray[i][j]
     return conts
 
 grp = []
@@ -69,12 +69,12 @@ for ID in range(75):
     else:
         grp.append('PAT')
 
-def getGrpContacts(g1, g2, contactsArray):
+def getGrpContacts(g1, g2, simContactsArray):
     conts = {}
     for i in range(groupRange[g1][0], groupRange[g1][1]):
         conts[i] = 0
         for j in range(groupRange[g2][0], groupRange[g2][1]):
-            conts[i] += contactsArray[i][j]
+            conts[i] += simContactsArray[i][j]
     return conts
 
 groupRange = {'ADM': [0, 8], 'MED': [8, 19], 'NUR': [19, 46], 'PAT': [46, 75]}
@@ -132,8 +132,8 @@ for i in range(75):
         else:
             contacts[i][j] = 0
 
-contactsArray = np.ones((75, 75), int)
-np.fill_diagonal(contactsArray, 0)
+simContactsArray = np.ones((75, 75), int)
+np.fill_diagonal(simContactsArray, 0)
 
 # Diganoal blocks
 for g1 in groups:
@@ -173,17 +173,17 @@ for g1 in groups:
             stubs[j] -= 1
             contacts[i][j] += 1
             contacts[j][i] += 1
-            contactsArray[i, j] += 1
-            contactsArray[j, i] += 1
+            simContactsArray[i, j] += 1
+            simContactsArray[j, i] += 1
         counter += 1
 
     # print(counter)
-    # print(getGrpContacts(g1, g1, contactsArray), sum(getGrpContacts(g1, g1, contactsArray).values()))
+    # print(getGrpContacts(g1, g1, simContactsArray), sum(getGrpContacts(g1, g1, simContactsArray).values()))
     # print(stubs, sum(stubs.values()))
     # print('\n')
     # for ID in range(groupRange[g1][0], groupRange[g1][1]):
-    #     if getActualContacts(i, contactsArray)[g1] > assignedK[ID][g1]:
-    #         print(ID, g1, getActualContacts(i, contactsArray)[g1], assignedK[ID][g1])
+    #     if getActualContacts(i, simContactsArray)[g1] > assignedK[ID][g1]:
+    #         print(ID, g1, getActualContacts(i, simContactsArray)[g1], assignedK[ID][g1])
 
 # Off-diagonal blocks
 for g1 in groups:
@@ -265,60 +265,69 @@ for g1 in groups:
 
                     contacts[i][j] += 1
                     contacts[j][i] += 1
-                    contactsArray[i, j] += 1
-                    contactsArray[j, i] += 1
+                    simContactsArray[i, j] += 1
+                    simContactsArray[j, i] += 1
 
 # Remove 1 becuse off-diagonal was initiated with 1
 for i in range(75):
     for j in range(75):
         if i != j:
-            contactsArray[i][j] -= 1
+            simContactsArray[i][j] -= 1
 
-dailyContactsArray = contactsArray // 4
+simDailyContactsArray = simContactsArray // 4
 
-# contArr = dailyContactsArray * 4
-# diffArr = np.subtract(contactsArray, contArr)
-#print(diffArr)
+# # contArr = dailysimContactsArray * 4
+# # diffArr = np.subtract(simContactsArray, contArr)
+# #print(diffArr)
 
-simDegrees = {}
-for g1 in groups:
-    simDegrees[g1] = {}
-    for g2 in groups:
-        simDegrees[g1][g2] = []
-        for i in range(groupRange[g1][0], groupRange[g1][1]):
-            k_i = contactsArray[i, groupRange[g2][0]:groupRange[g2][1]]
-            simDegrees[g1][g2].append(sum(k_i))
-            simDegrees[g1][g2].sort()
+# simDegrees = {}
+# for g1 in groups:
+#     simDegrees[g1] = {}
+#     for g2 in groups:
+#         simDegrees[g1][g2] = []
+#         for i in range(groupRange[g1][0], groupRange[g1][1]):
+#             k_i = simContactsArray[i, groupRange[g2][0]:groupRange[g2][1]]
+#             simDegrees[g1][g2].append(sum(k_i))
+#             simDegrees[g1][g2].sort()
                 
 
-            # for ID in range(groupRange[g1][0], groupRange[g1][1]):
-            #     if getActualContacts(i, contactsArray)[g2] > assignedK[ID][g2]:
-            #         print(ID, g1, g2, getActualContacts(i, contactsArray)[g2], assignedK[ID][g2])
-            # for ID in range(groupRange[g2][0], groupRange[g2][1]):
-            #     if getActualContacts(i, contactsArray)[g1] > assignedK[ID][g1]:
-            #         print(ID, g2, g1, getActualContacts(i, contactsArray)[g1], assignedK[ID][g1])
+#             # for ID in range(groupRange[g1][0], groupRange[g1][1]):
+#             #     if getActualContacts(i, simContactsArray)[g2] > assignedK[ID][g2]:
+#             #         print(ID, g1, g2, getActualContacts(i, simContactsArray)[g2], assignedK[ID][g2])
+#             # for ID in range(groupRange[g2][0], groupRange[g2][1]):
+#             #     if getActualContacts(i, simContactsArray)[g1] > assignedK[ID][g1]:
+#             #         print(ID, g2, g1, getActualContacts(i, simContactsArray)[g1], assignedK[ID][g1])
 
 
-actConts = {}
-for i in range(75):
-    actConts[i] = getActualContacts(i, contactsArray)
-    #print(assignedK[i], actConts[i], '\t', sum(assignedK[i].values()), '\t', sum(actConts[i].values()))
+# actConts = {}
+# for i in range(75):
+#     actConts[i] = getActualContacts(i, simContactsArray)
+#     #print(assignedK[i], actConts[i], '\t', sum(assignedK[i].values()), '\t', sum(actConts[i].values()))
 
-def dist(g1, g2):
-    x = []
-    n = groupSizes[g1]
-    a = params[g1][g2][0]
-    b = params[g1][g2][1]
-    for i in range(n):
-        y = random.random()
-        if g1 == 'MED' and g2 == 'MED':
-            x.append(distFunctions(g1, g1)(g1))
-        else:
-            x.append(distFunctions(g1, g2)(y, a, b))
-    return x
+# def dist(g1, g2):
+#     x = []
+#     n = groupSizes[g1]
+#     a = params[g1][g2][0]
+#     b = params[g1][g2][1]
+#     for i in range(n):
+#         y = random.random()
+#         if g1 == 'MED' and g2 == 'MED':
+#             x.append(distFunctions(g1, g1)(g1))
+#         else:
+#             x.append(distFunctions(g1, g2)(y, a, b))
+#     return x
 
-# def plotDist(g1, g2):
-#     x = dist(g1, g2)
+# # def plotDist(g1, g2):
+# #     x = dist(g1, g2)
+# #     x.sort()
+# #     y = []
+# #     n = groupSizes[g1]
+# #     for i in range(n):
+# #         y.append(1-float(i)/float(n))
+# #     return x, y
+
+# def plotDist(g1, g2, empDist):
+#     x = empDist[g1][g2]
 #     x.sort()
 #     y = []
 #     n = groupSizes[g1]
@@ -326,20 +335,11 @@ def dist(g1, g2):
 #         y.append(1-float(i)/float(n))
 #     return x, y
 
-def plotDist(g1, g2, empDist):
-    x = empDist[g1][g2]
-    x.sort()
-    y = []
-    n = groupSizes[g1]
-    for i in range(n):
-        y.append(1-float(i)/float(n))
-    return x, y
-
 # # Heatmap
-# contactsArrayBkp = contactsArray
-# contactsArray = contactsArray+1
-# contactsArray = np.log(contactsArray)
-# config_hm = sns.heatmap(contactsArray, vmin = 1, vmax = 8)
+# simContactsArrayBkp = simContactsArray
+# simContactsArray = simContactsArray+1
+# simContactsArray = np.log(simContactsArray)
+# config_hm = sns.heatmap(simContactsArray, vmin = 1, vmax = 8)
 # config_hm.set_title('Simulated heatmap')
 # for x in [8, 19, 46]:
 #     config_hm.axhline(x, linewidth = 1, color = 'w')

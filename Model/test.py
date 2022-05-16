@@ -1,10 +1,18 @@
-from random import shuffle
+import matplotlib.pyplot as plt
 import numpy as np
+from collections import Counter
 import random
 
-a = {0: 0, 1:0, 2:0}
+attrs = {}
 
-for i in range(3):
-    a[i] += 1
+for node in range(10):
+    attrs[node] = {}
 
-print(a)
+for node in attrs:
+    if node < 5:
+        attrs[node]['present'] = True
+    else:    
+        attrs[node]['present'] = False
+
+print(attrs)
+    
