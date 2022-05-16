@@ -7,11 +7,68 @@ from matplotlib.lines import Line2D
 from configurationModel import *
 from empContactsArray import *
 
-#simContactsArray = configMod()[0]
+simContactsArray = configMod()[0]
 
+groups = ['ADM', 'MED', 'NUR', 'PAT']
+grpRange = {'ADM': [0, 8], 'MED': [8, 19], 'NUR': [19, 46], 'PAT': [46, 75]}
 
-for ID in len(empContactsArray):
-    print(ID)
+def getDegrees(contactsArray):
+    degrees = {}
+    for g1 in groups:
+        degrees[g1] = {}
+        for g2 in groups:
+            degrees[g1][g2] = []
+            for i in range(groupRange[g1][0], groupRange[g1][1]):
+                k_i = contactsArray[i, groupRange[g2][0]:groupRange[g2][1]]
+                degrees[g1][g2].append(sum(k_i))
+                degrees[g1][g2].sort()
+    return degrees
+
+def plotBlockDegreeDist(sims):
+    plt.style.use('seaborn')
+    f,((ax1, ax2, ax3, ax4),
+    (ax5, ax6, ax7, ax8),
+    (ax9, ax10, ax11, ax12),
+    (ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (12, 7.5))
+    f.suptitle('Cumulative degree distributions', fontsize = 'x-large')
+    f.supylabel('Frequency')
+    f.supxlabel('Degree ')
+    axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
+    logx_axs = [ax1, ax2, ax3, ax5, ax11, ax13]
+    logy_axs = [ax2, ax4, ax5, ax7, ax8, ax9, ax10, ax12, ax14, ax15, ax16]
+    
+    i = 0
+    for g1 in groups:
+        for g2 in groups:
+            # Empirical
+            empDegrees = getDegrees(empContactsArray)
+            x = empDegrees[g1][g2]
+            y = np.arange(len(empDegrees[g1][g2]))/float(len(empDegrees[g1][g2]))
+            axs[i].plot(x, 1-y)
+            # Simulated
+            for n in range(sims):
+                simContactsArray = configMod()[0]
+                simDegrees = getDegrees(simContactsArray)
+                x2 = simDegrees[g1][g2]
+                y2 = np.arange(len(simDegrees[g1][g2]))/float(len(simDegrees[g1][g2]))
+                axs[i].plot(x2, 1-y2, 'g', alpha = 0.3)
+            for ax in logx_axs:
+                ax.semilogx()
+            for ax in logy_axs:
+                ax.semilogy()
+            i += 1
+
+    f.legend(['Empirical', 'Simulation'])
+    axs[12].set_xlabel('ADM')
+    axs[13].set_xlabel('MED')
+    axs[14].set_xlabel('NUR')
+    axs[15].set_xlabel('PAT')
+    axs[0].set_ylabel('ADM')
+    axs[4].set_ylabel('MED')
+    axs[8].set_ylabel('NUR')
+    axs[12].set_ylabel('PAT')
+    f.tight_layout()
+    plt.show()
 
 def getK(contactsArray):
     k = {}
@@ -21,7 +78,7 @@ def getK(contactsArray):
         i += 1
     return k
 
-def plotDegreeDist(empContacts, simContacts, n):
+def plotWardDegreeDist(empContacts, simContacts, n):
     # emp
     empK = getK(empContacts)
     x = sorted(list(empK.values()))
@@ -42,7 +99,7 @@ def plotDegreeDist(empContacts, simContacts, n):
     plt.savefig('wardDegreeDist_logy_20sims.png')
     plt.show()
 
-#plotDegreeDist(empContactsArray, 20)
+#plotWardDegreeDist(empContactsArray, 20)
 
 def getB(contactsArray):
     k = getK(contactsArray)
@@ -85,8 +142,7 @@ def getA(contactsArray):
         A[i] = (A[i] / k[i])
     return A
 
-groups = ['ADM', 'MED', 'NUR', 'PAT']
-grpRange = {'ADM': [0, 8], 'MED': [8, 19], 'NUR': [19, 46], 'PAT': [46, 75]}
+
 grpColor = {'ADM': 'tab:blue', 'MED': 'tab:purple', 'NUR': 'tab:green', 'PAT': 'tab:orange'}
 
 def plotAssortativity(contactsArray):
