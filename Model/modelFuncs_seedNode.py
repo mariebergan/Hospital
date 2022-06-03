@@ -268,7 +268,10 @@ def timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, seedNode):
         infectedStates = ['Ia', 'Ip', 'Is', 'H', 'ICU']
         if attrs[seedNode]['state'] in infectedStates:
             cumInfected.append(attrs[seedNode]['infected'])
-    infBySeedNode = max(cumInfected)
+    if cumInfected:
+        infBySeedNode = max(cumInfected)
+    else:
+        infBySeedNode = 0
 
     infIDs = getInfIDs(attrs) 
     
@@ -294,7 +297,10 @@ def timedRun_sim(contactsArray, attrs, baseP, startDay, runDays, seedNode):
         infectedStates = ['Ia', 'Ip', 'Is', 'H', 'ICU']
         if attrs[seedNode]['state'] in infectedStates:
             cumInfected.append(attrs[seedNode]['infected'])
-    infBySeedNode = max(cumInfected)
+    if cumInfected:
+        infBySeedNode = max(cumInfected)
+    else:
+        infBySeedNode = 0
 
     infIDs = getInfIDs(attrs) 
     

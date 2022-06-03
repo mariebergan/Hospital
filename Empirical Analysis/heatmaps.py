@@ -29,7 +29,7 @@ for x in [8, 19, 46]:
     ward_hm.axhline(x, linewidth = 1, color = 'w')
     ward_hm.axvline(x, linewidth = 1, color = 'w')
 plt.tight_layout
-plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/Emp_figs/wardHeatmap.png')
+plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/completeFigs/empHeatmap.png')
 plt.show()
 
 def status_heatmap(arr, title):

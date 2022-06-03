@@ -267,7 +267,7 @@ def testAll(attrs, day, startDay, runDays):
                 if testResult == True:
                     timedIsolation(node, attrs, day)
 
-def timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing):
+def timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing, nContactArrays):
     cont = 1
     day = startDay
     stateLog = []
@@ -277,13 +277,12 @@ def timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing):
     
     while day < endDay:
         day += 1
-        print(day)
 
         if testing == True:
             isoNodes = testAll(attrs, day, startDay, runDays)
 
         dailyInfs = 0
-        cont, dailyInfs = systemDay(contactsArray[day%4], attrs, baseP, day, startDay)
+        cont, dailyInfs = systemDay(contactsArray[day%nContactArrays], attrs, baseP, day, startDay)
         stateLog.append(countState(attrs, stateList))
         absenceLog.append(countAbsence(attrs))
         infLog.append(dailyInfs)

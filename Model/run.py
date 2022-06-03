@@ -1,20 +1,14 @@
 import matplotlib.pyplot as plt
 from modelFuncs import *
-from InitializeParams import *
+from parameters import *
 from empContactsArray import empDailyContactArrays
 from prefAttachConfigMod2 import simDailyContactsArray
 from matplotlib.lines import Line2D
 
-startDay = 0
-runDays = 60
-nSeedNodes = 1
-
 def runEmp(contactsArray):
     attrs = initModel(contactsArray, baseP, nSeedNodes) 
-    stateLog, absenceLog = timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing=False)
+    stateLog, absenceLog = timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing=False, nContactArrays=4)
     return stateLog, absenceLog 
-
-# runEmp(empDailyContactArrays)
     
 def runSim(contactsArray):
     attrs = initModel(contactsArray, baseP, nSeedNodes) 
@@ -23,7 +17,7 @@ def runSim(contactsArray):
 
 def runEmp_testing(contactsArray):
     attrs = initModel(contactsArray, baseP, nSeedNodes) 
-    stateLog, absenceLog = timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing=True)
+    stateLog, absenceLog = timedRun_emp(contactsArray, attrs, baseP, startDay, runDays, testing=True, nContactArrays=4)
     return stateLog, absenceLog 
     
 def runSim_testing(contactsArray):
@@ -94,7 +88,7 @@ def plotInfected(runModel, contactsArray, sims, ax):
             avgInf[i] += y[i]
     avgInf = avgInf/sims     
     ax.plot(x, avgInf, 'r')
-    ax.set_ylim([0, 40])    
+    ax.set_ylim([0, 20])    
 
 def plotRecovered(runModel, contactsArray, sims, ax):
     avgRec = np.zeros(runDays, dtype = int)
@@ -108,10 +102,10 @@ def plotRecovered(runModel, contactsArray, sims, ax):
             avgRec[i] += y[i]
     avgRec = avgRec/sims 
     ax.plot(x, avgRec, 'b')
-    ax.set_ylim([0, 40])    
+    ax.set_ylim([0, 50])    
 
 def infRecSubplot(runEmp, runSim, empDailyContactArrays, simContactsArray, sims):
-    f,((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex=True, sharey=True, figsize = (8, 6))
+    f,((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex=True, sharey='row', figsize = (8, 6))
     plotInfected(runEmp, empDailyContactArrays, sims, ax1)
     plotInfected(runSim, simContactsArray, sims, ax2)
     plotRecovered(runEmp, empDailyContactArrays, sims, ax3)
@@ -121,15 +115,15 @@ def infRecSubplot(runEmp, runSim, empDailyContactArrays, simContactsArray, sims)
     f.supxlabel('Day')
     f.supylabel('N')
     custom_lines = [Line2D([0], [0], color='r'), Line2D([0], [0], color= 'b')]
-    f.legend(custom_lines, ['Infected', 'Recovered'], frameon=False, loc='upper left',  bbox_to_anchor=(1.0, 0.95))   
+    f.legend(custom_lines, ['Infected', 'Recovered'], frameon=False, loc='lower left',  bbox_to_anchor=(0.65, 0), ncol=2)   
     f.tight_layout()
-    plt.savefig('infRec_p0.001.png', bbox_inches='tight')
+    plt.savefig('infRec_p0.001_20sims.png', bbox_inches='tight')
     plt.show()
 
-#infRecSubplot(runEmp, runSim, empDailyContactArrays, simDailyContactsArray, 20)   
+infRecSubplot(runEmp, runSim, empDailyContactArrays, simDailyContactsArray, 20)   
 
 def absentHCW(empContacts, simContacts, sims):
-    f, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(6, 6), sharey=True, sharex=True)
+    f, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(6, 6), sharey='row', sharex=True)
     
     avg1 = np.zeros(runDays, dtype = int)
     avg2 = np.zeros(runDays, dtype = int)
@@ -145,7 +139,7 @@ def absentHCW(empContacts, simContacts, sims):
         x = list(range(runDays)) 
         # Without testing, emp
         stateLog, y1 = runEmp(empContacts)
-        ax1.plot(x, y1, 'tab:blue', alpha=0.3)
+        ax1.plot(x, y1, 'tab:blue', alpha=0.15)
         ax1.set_title('Empirical', fontsize=11)
 
         infs1 = mergeInfected(stateLog)
@@ -155,7 +149,7 @@ def absentHCW(empContacts, simContacts, sims):
 
         # Without testing, sim
         stateLog, y2 = runSim(simContacts)
-        ax2.plot(x, y2, 'tab:blue', alpha=0.3)
+        ax2.plot(x, y2, 'tab:blue', alpha=0.15)
         ax2.set_title('Simulated', fontsize=11)
         infs2 = mergeInfected(stateLog)
         for i in range(runDays):
@@ -163,14 +157,14 @@ def absentHCW(empContacts, simContacts, sims):
             avgInfs2[i] += infs2[i]
         # With testing, emp
         stateLog, y3 = runEmp_testing(empContacts)
-        ax3.plot(x, y3, 'tab:orange', alpha=0.3)
+        ax3.plot(x, y3, 'tab:orange', alpha=0.15)
         infs3 = mergeInfected(stateLog)
         for i in range(runDays):
             avg3[i] += y3[i]
             avgInfs3[i] += infs3[i]
         # With testing, sim
         stateLog, y4 = runSim_testing(simContacts)
-        ax4.plot(x, y4, 'tab:orange', alpha=0.3)
+        ax4.plot(x, y4, 'tab:orange', alpha=0.15)
         infs4 = mergeInfected(stateLog)
         for i in range(runDays):
             avg4[i] += y4[i]
@@ -184,6 +178,11 @@ def absentHCW(empContacts, simContacts, sims):
     avgInfs2 = avgInfs2/sims
     avgInfs3 = avgInfs3/sims
     avgInfs4 = avgInfs4/sims
+
+    ax1.plot(x, avg1, 'tab:blue')
+    ax2.plot(x, avg2, 'tab:blue')
+    ax3.plot(x, avg3, 'tab:orange')
+    ax4.plot(x, avg4, 'tab:orange')
     
     ax5.plot(x, avg1, 'tab:blue')
     ax6.plot(x, avg2, 'tab:blue')
@@ -195,7 +194,6 @@ def absentHCW(empContacts, simContacts, sims):
     ax5.plot(x, avgInfs3, 'tab:orange', ls='--')
     ax6.plot(x, avgInfs4, 'tab:orange', ls='--')
 
-    f.suptitle('Absent Health Care Workers, p = 0.005')
     f.supxlabel('Day')
     f.supylabel('N')
     mylabels = ['Without testing', 'With testing', 'Absent HCWs', 'Total infected']
@@ -203,10 +201,10 @@ def absentHCW(empContacts, simContacts, sims):
                    Line2D([0], [0], color='black'), Line2D([0], [0], color= 'black', ls='--')]
     f.legend(customLines, mylabels, frameon=False, loc='upper left',  bbox_to_anchor=(1.0, 1.0))
     f.tight_layout()
-    plt.savefig('absentHCW_10sims_p0.005.png', bbox_inches='tight')
+    plt.savefig('absentHCW_p0.01_20sims.png', bbox_inches='tight')
     plt.show()
 
-absentHCW(empDailyContactArrays, simDailyContactsArray, 10)
+#absentHCW(empDailyContactArrays, simDailyContactsArray, 20)
 
 def absentHCW_old(empContacts, simContacts):
     f, ((ax1, ax2)) = plt.subplots(1, 2, figsize=(10, 4), sharey=True)

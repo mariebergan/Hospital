@@ -1,8 +1,12 @@
+startDay = 0
+runDays = 60
+nSeedNodes = 1
+
 # Set base probabilities
 baseP = {}
 
 # Infection probabilities
-p = 0.005
+p = 0.01
 baseP['inf'] = {'ADM': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},
                 'MED': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},
                 'NUR': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},

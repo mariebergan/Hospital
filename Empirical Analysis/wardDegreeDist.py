@@ -26,11 +26,11 @@ def plotDegreeDist():
     plt.ylabel('Frequency')
     #plt.semilogx()
     plt.semilogy()
-    plt.title('Cumulative degree distribution')
-    #plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/Emp_figs/wardDegreeDist.png')
+    #plt.title('Cumulative degree distribution')
+    plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/completeFigs/empWardDegreeDist.png')
     plt.show()
 
-print(contactsArray[0:8, 0:8])
+plotDegreeDist()
 
 k = {}
 i = 0
@@ -50,4 +50,4 @@ y = np.arange(len(x))/float(len(x))
 plt.plot(x, 1-y)
 #plt.semilogx()
 #plt.semilogy()
-plt.show()
+#plt.show()

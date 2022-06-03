@@ -38,3 +38,4 @@ temporalEdgeList.close()
 empDailyContactArrays = [day1, day2, day3, day4]
 
 
+print(empContactsArray[70:75, 70:75])
