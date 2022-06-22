@@ -4,9 +4,9 @@ import seaborn as sns
 import scipy.stats as st
 from matplotlib.lines import Line2D
 from configurationModel import configMod
-from empContactsArray import empContactsArray, empDailyContactArrays
+from empContacts import empContactsArray, empDailyContactArrays
 
-simContactsArray = configMod()[0]
+#simContactsArray = configMod()[0]
 
 groups = ['ADM', 'MED', 'NUR', 'PAT']
 grpRange = {'ADM': [0, 8], 'MED': [8, 19], 'NUR': [19, 46], 'PAT': [46, 75]}
@@ -30,8 +30,7 @@ def plotBlockDegreeDist(sims):
     (ax9, ax10, ax11, ax12),
     (ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (10, 7.5))
     #f.suptitle('Cumulative degree distributions', fontsize = 'x-large')
-    f.supylabel('Frequency')
-    f.supxlabel('Degree ')
+    
     axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
     logx_axs = [ax1, ax2, ax3, ax5, ax11, ax13]
     logy_axs = [ax2, ax4, ax5, ax7, ax8, ax9, ax10, ax12, ax14, ax15, ax16]
@@ -54,7 +53,7 @@ def plotBlockDegreeDist(sims):
             for g2 in groups:
                 x2 = simDegrees[g1][g2]
                 y2 = np.arange(len(simDegrees[g1][g2]))/float(len(simDegrees[g1][g2]))
-                axs[i].plot(x2, 1-y2, 'g', alpha = 0.2)
+                axs[i].plot(x2, 1-y2, 'g', alpha = 0.15)
                 i += 1
     for ax in logx_axs:
         ax.semilogx()
@@ -70,9 +69,12 @@ def plotBlockDegreeDist(sims):
     axs[4].set_ylabel('MED')
     axs[8].set_ylabel('NUR')
     axs[12].set_ylabel('PAT')
+    f.supylabel('             Frequency')
+    f.supxlabel('                  Degree')
     f.tight_layout()
     plt.savefig('simBlockDegreeDist_10sims.png', bbox_inches='tight')
     plt.show()
+
     
 def getK(contactsArray):
     k = {}
@@ -90,18 +92,20 @@ def plotWardDegreeDist(n):
     plt.plot(x, 1-y)
     # sim
     for sim in range(n):
+        print(sim)
         simContactsArray = configMod()[0]
         simK = getK(simContactsArray)
         x2 = sorted(list(simK.values()))
         y2 = np.arange(len(x2))/float(len(x2))
-        plt.plot(x2, 1-y2, 'g', alpha = 0.2)
+        plt.plot(x2, 1-y2, 'g', alpha = 0.15)
     plt.xlabel('Degree')
     plt.ylabel('Frequency')
     plt.legend(['Empirical', 'Simulated'], loc='upper right', frameon=False)
-    #plt.semilogx()
+    # plt.semilogx()
     plt.semilogy()
     #plt.title('Cumulative Degree Distribution')
-    plt.savefig('wardDegreeDist_10sims.png')
+    plt.tight_layout()
+    plt.savefig('wardDegreeDist_20sims.png')
     plt.show()
 
 def getB(contactsArray):
@@ -117,21 +121,22 @@ def getB(contactsArray):
 def plotSumOfNeighbouredKdist(n):
     # emp
     empB = getB(empContactsArray)
-    # x = sorted(list(empB.values()))
-    # y = np.arange(len(x))/float(len(x))
-    y = sorted(list(empB.values()))
-    empK = getK(empContactsArray)
-    x = sorted(list(empK.values()))
+    x = sorted(list(empB.values()))
+    y = np.arange(len(x))/float(len(x))
+    # y = sorted(list(empB.values()))
+    # empK = getK(empContactsArray)
+    # x = sorted(list(empK.values()))
     plt.plot(x, 1-y)
     # sim
     for sim in range(n):
+        print(sim)
         simContactsArray = configMod()[0]
         simB = getB(simContactsArray)
-        # x2 = sorted(list(simB.values()))
-        # y2 = np.arange(len(x2))/float(len(x2))
-        y2 = sorted(list(simB.values()))
-        simK = getK(simContactsArray)
-        x2 = sorted(list(simK.values()))
+        x2 = sorted(list(simB.values()))
+        y2 = np.arange(len(x2))/float(len(x2))
+        # y2 = sorted(list(simB.values()))
+        # simK = getK(simContactsArray)
+        # x2 = sorted(list(simK.values()))
         plt.plot(x2, 1-y2, 'g', alpha = 0.2)
     # plt.semilogx()
     plt.semilogy()
@@ -140,8 +145,6 @@ def plotSumOfNeighbouredKdist(n):
     plt.legend(['Empirical', 'Simulated'], loc='upper right', frameon=False)
     plt.savefig('sumOfNeighbouredDegrees_20sims.png')
     plt.show()
-
-plotSumOfNeighbouredKdist(2)
 
 def getA(contactsArray):
     k = getK(contactsArray)
@@ -184,13 +187,11 @@ def plotGrpDegreeCorrelations(contactsArray):
         ax[grp].set_title(grp)
 
     # f.suptitle('Degree correlations')
-    f.supxlabel('Degree')
-    f.supylabel('Average sum of neigboured degrees')
+    f.supxlabel('               Degree')
+    f.supylabel('           Average degree of neighbours')
     plt.tight_layout()
     plt.savefig('empGrpDegreeCorr.png')
     plt.show()
-
-#plotGrpDegreeCorrelations(empContactsArray)
 
 def plotWardDegreeCorrelations(contactsArray):
     k = getK(contactsArray)
@@ -205,7 +206,7 @@ def plotWardDegreeCorrelations(contactsArray):
                    Line2D([0], [0], color='tab:green'), Line2D([0], [0], color='tab:orange')]
     plt.legend(customLines, ['ADM', 'MED', 'NUR', 'PAT'], frameon=False)
     plt.xlabel('Degree')
-    plt.ylabel('Average sum of neigboured degrees')
+    plt.ylabel('Average degree of neighbours')
     plt.tight_layout()
     plt.savefig('empWardDegreeCorr.png')
     plt.show()
@@ -247,16 +248,63 @@ def calcSimGrpDegreeCorr(n):
         avgRho = sum(rhoSim[grp])/n
         confInt = st.norm.interval(alpha=0.95, loc=np.mean(rhoSim[grp]), scale=st.sem(rhoSim[grp]))
 
-def heatmap(contactsArray):
+def AvgHeatmap(sims):
+    contactsArray = np.zeros((75, 75), dtype = float)
+    for sim in range(sims):
+        print(sim)
+        simArr = configMod()[0]
+        for i in range(75):
+            for j in range(75):
+                contactsArray[i, j] += simArr[i, j]
+    for i in range(75):
+        for j in range(75):
+            contactsArray[i, j] /= sims
+
     contactsArray = contactsArray+1
     contactsArray = np.log(contactsArray)
+
+    w = []
+    for i in contactsArray:
+        for j in i:
+            w.append(j)
+    print(min(w), max(w))
+
     hm = sns.heatmap(contactsArray, vmin = 1, vmax = 8)
-    plt.xlabel('ADM     MED                NUR                            PAT              ')
-    plt.ylabel('              PAT                         NUR              MED    ADM')
+    plt.xlabel('ADM      MED                    NUR                                PAT                ')
+    plt.ylabel('             PAT                            NUR                 MED    ADM')
     for x in [8, 19, 46]:
         hm.axhline(x, linewidth = 1, color = 'w')
         hm.axvline(x, linewidth = 1, color = 'w')
     plt.tight_layout()
     plt.savefig('simHeatmap.png')
     plt.show()
+
+def heatmap():
+    emp = empContactsArray+1
+    sim = configMod()[0]+1
+    empArr = np.log(emp)
+    simArr = np.log(sim)
+
+    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5), sharey=True, sharex=True, gridspec_kw={'width_ratios': [3.2, 4]})
+
+    empHM = sns.heatmap(empArr, ax=ax1, vmin=1, vmax=8, cbar=False)
+    simHM = sns.heatmap(simArr, ax=ax2, vmin=1, vmax=8)
+
+    ax1.set_xlabel('ADM     MED                NUR                             PAT              ')ZZ
+    ax1.set_ylabel('              PAT                           NUR              MED     ADM')
+    ax2.set_xlabel('ADM     MED                NUR                             PAT              ')
+    ax1.set_title('Empirical')
+    ax2.set_title('Simulated')
+    for x in [8, 19, 46]:
+            empHM.axhline(x, linewidth = 1, color = 'w')
+            empHM.axvline(x, linewidth = 1, color = 'w')
+            simHM.axhline(x, linewidth = 1, color = 'w')
+            simHM.axvline(x, linewidth = 1, color = 'w')
+    plt.tight_layout
+    plt.savefig('emp_sim_heatmap.png')
+    plt.show()
+
+heatmap()
+
+
 

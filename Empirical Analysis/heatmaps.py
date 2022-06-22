@@ -1,4 +1,4 @@
-# Creates ward heatmap, status heatmaps and 2-and-2 combination heatmaps for the entire study period 
+# Creates ward heatmap, status heatmaps and 2-and-2 combination heatmaps for the entire study period
 
 from matplotlib.pyplot import ylabel
 import numpy as np
@@ -18,11 +18,15 @@ for line in f:
     Wij = int(splitLine[4])
     ward_arr[i, j] = np.log(Wij)
     ward_arr[j, i] = np.log(Wij)
+    # ward_arr[i, j] = Wij
+    # ward_arr[j, i] = Wij
 f.close()
+
+
 
 ward_arr = ward_arr + 1 # unngå verdier med 0 som man ikke kan ta log av
 # heatmap for the entire ward
-ward_hm = sns.heatmap(ward_arr, vmin = 1, vmax = 8)
+ward_hm = sns.heatmap(ward_arr, vmin=1, vmax=8)
 plt.xlabel('ADM     MED                NUR                            PAT              ')
 plt.ylabel('              PAT                         NUR              MED    ADM')
 for x in [8, 19, 46]:
@@ -31,6 +35,8 @@ for x in [8, 19, 46]:
 plt.tight_layout
 plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/completeFigs/empHeatmap.png')
 plt.show()
+
+
 
 def status_heatmap(arr, title):
     hm = sns.heatmap(arr, vmin = 1, vmax = 8)

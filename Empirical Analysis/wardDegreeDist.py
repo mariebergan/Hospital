@@ -25,7 +25,7 @@ def plotDegreeDist():
     plt.xlabel('Degree')
     plt.ylabel('Frequency')
     #plt.semilogx()
-    plt.semilogy()
+    #plt.semilogy()
     #plt.title('Cumulative degree distribution')
     plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/completeFigs/empWardDegreeDist.png')
     plt.show()

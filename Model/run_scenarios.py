@@ -1,11 +1,10 @@
 from tkinter import N
 import matplotlib.pyplot as plt
 from modelFuncs import *
-from InitializeParams import *
-from empContactsArray import empDailyContactArrays
-from configurationModel import *
+from parameters import *
+from empContacts import empDailyContactArrays
+from configurationModel import configMod
 from matplotlib.lines import Line2D
-
 
 startDay = 0
 runDays = 60
@@ -27,9 +26,10 @@ def runSim1():
 # Scanerio 2
 def runSim2():
     n = 4
+    #n=1
     contactArrays = []
     for i in range(n):
-        print('scenario2', 'array=', i)
+        print(i)
         dailyContacts = configMod()[1]
         contactArrays.append(dailyContacts)
     attrs = initModel(contactArrays, baseP, nSeedNodes)
@@ -39,9 +39,10 @@ def runSim2():
 # Scenario 3
 def runSim3():
     n = 60
+    #n=1
     contactArrays = []
     for i in range(n):
-        print('scenario3', 'array=', i)
+        print(i)
         dailyContacts = configMod()[1]
         contactArrays.append(dailyContacts)
     attrs = initModel(contactArrays, baseP, nSeedNodes)
@@ -69,7 +70,7 @@ def getInfRec(runModel, sims, infAx, recAx):
     avgInf = np.zeros(runDays, dtype = int)
     avgRec = np.zeros(runDays, dtype = int)
     for sim in range(sims):
-        print('sim=', sim)
+        print('sim:', sim)
         # inf
         stateLog, absenceLog = runModel()
         x1 = list(range(runDays))
@@ -85,34 +86,31 @@ def getInfRec(runModel, sims, infAx, recAx):
             avgRec[i] += y2[i]
     avgInf = avgInf/sims
     infAx.plot(x1, avgInf, 'r')
-    infAx.set_ylim([0, 50])
     avgRec = avgRec/sims
     recAx.plot(x2, avgRec, 'b')
-    recAx.set_ylim([0, 75])
 
 def infRecSubplot(sims):
     f,((ax1, ax2, ax3, ax4), (ax5, ax6, ax7, ax8)) = plt.subplots(2, 4, sharex=True, sharey='row', figsize = (10, 6))
-    getInfRec(runEmp, sims, ax1, ax5)
     print('emp')
-    getInfRec(runSim1, sims, ax2, ax6)
+    getInfRec(runEmp, sims, ax1, ax5)
     print('sim1')
-    getInfRec(runSim2, sims, ax3, ax7)
+    getInfRec(runSim1, sims, ax2, ax6)
     print('sim2')
-    getInfRec(runSim3, sims, ax4, ax8)
+    getInfRec(runSim2, sims, ax3, ax7)
     print('sim3')
+    getInfRec(runSim3, sims, ax4, ax8)
     ax1.set_title('Empirical')
     ax2.set_title('Simulated 1')
     ax3.set_title('Simulated 2')
     ax4.set_title('Simulated 3')
-    f.supxlabel('Day')
-    f.supylabel('N')
+    f.supxlabel('           Day')
+    f.supylabel('      N')
     custom_lines = [Line2D([0], [0], color='r'), Line2D([0], [0], color= 'b')]
     f.legend(custom_lines, ['Infected', 'Recovered'], frameon=False, loc='lower left',  bbox_to_anchor=(0.75, 0), ncol=2)   
     f.tight_layout()
-    plt.savefig('infRec_scenarios_p0.005.png', bbox_inches='tight')
+    plt.savefig('infRec_scenarios_p0.001_20sims.png', bbox_inches='tight')
     plt.show()
 
-#infRecSubplot(20)
 
 ## emp daily
 def runEmpDaily(contactsArray):
@@ -124,7 +122,6 @@ def getInfRecEmpDaily(runModel, contactsArray, sims, infAx, recAx):
     avgInf = np.zeros(runDays, dtype = int)
     avgRec = np.zeros(runDays, dtype = int)
     for sim in range(sims):
-        print('sim=', sim)
         # inf
         stateLog, absenceLog = runModel(contactsArray)
         x1 = list(range(runDays))
@@ -142,12 +139,10 @@ def getInfRecEmpDaily(runModel, contactsArray, sims, infAx, recAx):
     infAx.plot(x1, avgInf, 'r')
     avgRec = avgRec/sims
     recAx.plot(x2, avgRec, 'b')
-    infAx.set_ylim([0, 40])
-    recAx.set_ylim([0, 75])
 
 
 def infRecSubplotEmpDaily(sims):
-    f,((ax1, ax2, ax3, ax4, ax5), (ax6, ax7, ax8, ax9, ax10)) = plt.subplots(2, 5, sharex=True, sharey='row', figsize = (11, 6))
+    f,((ax1, ax2, ax3, ax4, ax5), (ax6, ax7, ax8, ax9, ax10)) = plt.subplots(2, 5, sharex=True, sharey='row', figsize = (12, 6))
     getInfRec(runEmp, sims, ax1, ax6)
     getInfRecEmpDaily(runEmpDaily, empDailyContactArrays[0], sims, ax2, ax7)
     getInfRecEmpDaily(runEmpDaily, empDailyContactArrays[1], sims, ax3, ax8)
@@ -160,12 +155,11 @@ def infRecSubplotEmpDaily(sims):
     ax3.set_title('Day 2')
     ax4.set_title('Day 3')
     ax5.set_title('Day 4')
-    f.supxlabel('Day')
-    f.supylabel('N')
+    f.supxlabel('             Day')
+    f.supylabel('     N')
     custom_lines = [Line2D([0], [0], color='r'), Line2D([0], [0], color= 'b')]
     f.legend(custom_lines, ['Infected', 'Recovered'], frameon=False, loc='lower left',  bbox_to_anchor=(0.75, 0), ncol=2)   
     f.tight_layout()
-    plt.savefig('infRec_empDaily_p0.005_20sims.png', bbox_inches='tight')
+    plt.savefig('infRec_empDaily_p0.001_20sims.png', bbox_inches='tight')
     plt.show()
 
-infRecSubplotEmpDaily(20)

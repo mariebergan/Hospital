@@ -1,12 +1,10 @@
-from operator import ne
-from re import A
 import numpy as np
 import seaborn as sns
 from modelFuncs_seedNode import *
-from InitializeParams import *
+from parameters import *
 import matplotlib.pyplot as plt
 from configurationModel import configMod
-from empContactsArray import empContactsArray, empDailyContactArrays
+from empContacts import empContactsArray, empDailyContactArrays
 from collections import Counter
 from matplotlib.lines import Line2D
 import scipy.stats as st
@@ -17,6 +15,7 @@ runDays = 60
 def runEmp(seedNode, seedState):
     attrs = initModel(empDailyContactArrays, baseP, seedNode, seedState)
     stateLog, infIDs, infBySeedNode = timedRun_emp(empDailyContactArrays, attrs, baseP, startDay, runDays, seedNode)
+    print(infBySeedNode)
     return stateLog, infIDs, infBySeedNode
 
 def runSim(seedNode, seedState):
@@ -61,8 +60,7 @@ def getSeedInfArray(sims):
             f2.write(str(x) + '\t')
         f2.write('\n')
     f2.close()
-    print(IaSeedInfArray[0:10, 0:10])
-    print(IpSeedInfArray[0:10, 0:10])
+
 
 def genSeedNodeArray(file):
     seedNodeArray = np.zeros((75, 75), dtype=int)
@@ -79,19 +77,19 @@ def genSeedNodeArray(file):
 def seedNodeHeatmap():
     f, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(6, 8), sharey=True, sharex=True)
     # Asymptomaitc             
-    # a1 = genSeedNodeArray('empIa_0.01.txt')
-    # a2 = genSeedNodeArray('simIa_0.01.txt')
-    # a3 = genSeedNodeArray('empIa_0.005.txt')
-    # a4 = genSeedNodeArray('simIa_0.005.txt')
-    # a5 = genSeedNodeArray('empIa_0.001.txt')
-    # a6 = genSeedNodeArray('simIa_0.001.txt')
+    a1 = genSeedNodeArray('Output/empIa_0.01.txt')
+    a2 = genSeedNodeArray('Output/simIa_0.01.txt')
+    a3 = genSeedNodeArray('Output/empIa_0.005.txt')
+    a4 = genSeedNodeArray('Output/simIa_0.005.txt')
+    a5 = genSeedNodeArray('Output/empIa_0.001.txt')
+    a6 = genSeedNodeArray('Output/simIa_0.001.txt')
     # Presymptomatic
-    a1 = genSeedNodeArray('empIp_0.01.txt')
-    a2 = genSeedNodeArray('simIp_0.01.txt')
-    a3 = genSeedNodeArray('empIp_0.005.txt')
-    a4 = genSeedNodeArray('simIp_0.005.txt')
-    a5 = genSeedNodeArray('empIp_0.001.txt')
-    a6 = genSeedNodeArray('simIp_0.001.txt')
+    # a1 = genSeedNodeArray('Output/empIp_0.01.txt')
+    # a2 = genSeedNodeArray('Output/simIp_0.01.txt')
+    # a3 = genSeedNodeArray('Output/empIp_0.005.txt')
+    # a4 = genSeedNodeArray('Output/simIp_0.005.txt')
+    # a5 = genSeedNodeArray('Output/empIp_0.001.txt')
+    # a6 = genSeedNodeArray('Output/simIp_0.001.txt')
 
     infArrays = [a1, a2, a3, a4, a5, a6]
     axs = [ax1, ax2, ax3, ax4, ax5, ax6]
@@ -104,17 +102,15 @@ def seedNodeHeatmap():
             hm.axvline(y, linewidth = 1, color = 'w')
     ax1.set_title('Empirical')
     ax2.set_title('Simulated')
-    ax5.set_xlabel('ADM  MED         NUR                   PAT           ', fontsize=9)
-    ax6.set_xlabel('ADM  MED         NUR                   PAT           ', fontsize=9)
-    ax1.set_ylabel('          PAT               NUR       MED ADM', fontsize=9)
-    ax3.set_ylabel('          PAT               NUR       MED ADM', fontsize=9)
-    ax5.set_ylabel('          PAT               NUR       MED ADM', fontsize=9)
+    ax5.set_xlabel('ADM   MED           NUR                     PAT           ', fontsize=8)
+    ax6.set_xlabel('ADM   MED           NUR                     PAT           ', fontsize=8)
+    ax1.set_ylabel('           PAT                   NUR         MED  ADM', fontsize=8)
+    ax3.set_ylabel('           PAT                   NUR         MED  ADM', fontsize=8)
+    ax5.set_ylabel('           PAT                   NUR         MED  ADM', fontsize=8)
     f.supylabel('p = 0.001                                p = 0.005                                p = 0.01')
     f.tight_layout()
-    plt.savefig('testSeedNode_presymp.png')
+    plt.savefig('testSeedNode_asymp.png')
     plt.show()
-
-seedNodeHeatmap()
 
 def seedNodeHM(runEmp, empContacts, runSim, simContacts, sims):
     empSeedInfArr = np.zeros((75, 75), dtype=int)
@@ -149,7 +145,7 @@ def seedNodeHM(runEmp, empContacts, runSim, simContacts, sims):
 
 #seedNodeHeatmap(runEmp, empDailyContactArrays, runSim, simDailyContactsArray, 2)
 
-def getInfBySeedNode(runModel, contactsArray, sims):
+def getInfBySeedNode(runModel, sims):
     infBySeedNode = {}
     stateInf = {}
     for grp in groups:
@@ -158,7 +154,7 @@ def getInfBySeedNode(runModel, contactsArray, sims):
         for sim in range(sims):
             for state in seedStates:
                 seedNode = random.randint(groupRange[grp][0], groupRange[grp][1])
-                infs = runModel(contactsArray, seedNode, state)[2]
+                infs = runModel(seedNode, state)[2]
                 stateInf[grp][state].append(infs)
         stateInf[grp]['Ia'].sort()
         stateInf[grp]['Ip'].sort()
@@ -225,9 +221,9 @@ def saveR0(runModel, contactsArray, sims, p):
     f2.write('\n')
     f2.close()
 
-def plotR(runEmp, empContacts, runSim, simContacts, sims):
-    infBySeedNode_emp = getInfBySeedNode(runEmp, empContacts, sims)
-    infBySeedNode_sim = getInfBySeedNode(runSim, simContacts, sims)
+def plotR(runEmp, runSim, sims):
+    infBySeedNode_emp = getInfBySeedNode(runEmp, sims)
+    infBySeedNode_sim = getInfBySeedNode(runSim, sims)
     infBySeedNode_aggr_emp = aggregateAbove6(infBySeedNode_emp)
     infBySeedNode_aggr_sim = aggregateAbove6(infBySeedNode_sim)
     R0_emp = calculateR0(infBySeedNode_emp, sims)
@@ -269,7 +265,7 @@ def plotR(runEmp, empContacts, runSim, simContacts, sims):
     plt.savefig('R0pieChart_p0.0005.png', bbox_inches='tight')
     plt.show()
 
-#plotR(runEmp, empDailyContactArrays, runSim, simDailyContactsArray, 100)
+plotR(runEmp, runSim, 1)
 
 def getR0():
     R0 = {}
@@ -279,7 +275,7 @@ def getR0():
             R0[state][network] = {}
             for grp in groups:
                 R0[state][network][grp] = []
-    empR0 = open('empR0_file.txt')
+    empR0 = open('Output/empR0_file.txt')
     for line in empR0:
         splitLine = line.rstrip().split('\t')
         i = 1
@@ -288,7 +284,7 @@ def getR0():
             R0['Ip']['emp'][grp].append(float(splitLine[i+4]))
             i += 1
     empR0.close()
-    simR0 = open('simR0_file.txt')
+    simR0 = open('Output/simR0_file.txt')
     for line in simR0:
         splitLine = line.rstrip().split('\t')
         i = 1
@@ -310,7 +306,7 @@ def getConfInts():
                 for bound in ['lower', 'upper']:
                     confInts[state][network][grp][bound] = []
 
-    empConfInts = open('empConfInts_file.txt')
+    empConfInts = open('Output/empConfInts_file.txt')
     for line in empConfInts:
         splitLine = line.rstrip().split('\t')
         i = 1
@@ -321,7 +317,7 @@ def getConfInts():
             confInts['Ip']['emp'][grp]['upper'].append(float(splitLine[i+9]))
             i += 2
     empConfInts.close()
-    simConfInts = open('simConfInts_file.txt')
+    simConfInts = open('Output/simConfInts_file.txt')
     for line in simConfInts:
         splitLine = line.rstrip().split('\t')
         i = 1
@@ -352,16 +348,14 @@ def plot_p_R0():
                 axs[i].plot(p, y, styles[network][grp][0], ls=styles[network][grp][1])
         i += 1
     
-    f.legend(customLines, ['ADM', 'MED', 'NUR', 'PAT', 'Emprirical', 'Simulated'], frameon=False, loc='upper left',  bbox_to_anchor=(1.0, 1.0))
+    f.legend(customLines, ['ADM', 'MED', 'NUR', 'PAT', 'Empirical', 'Simulated'], frameon=False, loc='upper left',  bbox_to_anchor=(1.0, 0.95))
     ax1.set_title('Asymptomatic')
     ax2.set_title('Presymptomatic')
-    f.supxlabel('p')
-    f.supylabel(r'$R_0$')
+    f.supxlabel('         p')
+    f.supylabel(r'     $R_0$')
     f.tight_layout()
     plt.savefig('pAgainstR.png', bbox_inches='tight')
     plt.show()
-
-#plot_p_R0()
 
 def plot_p_R0_confInts():
     p = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01]
@@ -382,7 +376,7 @@ def plot_p_R0_confInts():
                 j += 4
             i += 1  
     
-    f.legend(customLines, ['ADM', 'MED', 'NUR', 'PAT', 'Emprirical', 'Simulated'], frameon=False, loc='lower left',  bbox_to_anchor=(0.25, -0.05), ncol=6)
+    f.legend(customLines, ['ADM', 'MED', 'NUR', 'PAT        ', 'Emprirical', 'Simulated'], frameon=False, loc='lower left',  bbox_to_anchor=(0.23, -0.05), ncol=6)
     ax1.set_title('Empirical', fontsize=10)
     ax2.set_title('Simulated', fontsize=10)
     ax3.set_title('Empirical', fontsize=10)
@@ -392,10 +386,9 @@ def plot_p_R0_confInts():
     ax9.set_ylabel('NUR')
     ax13.set_ylabel('PAT')
     f.suptitle('               Asymptomatic                                                                               Presymptomatic')
-    f.supxlabel('p')
-    f.supylabel(r'$R_0$')
+    f.supxlabel('             p')
+    f.supylabel(r'  $R_0$')
     f.tight_layout()
     plt.savefig('p_R_withConfInts.png', bbox_inches='tight')
     plt.show()
-
 

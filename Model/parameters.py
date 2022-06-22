@@ -6,7 +6,7 @@ nSeedNodes = 1
 baseP = {}
 
 # Infection probabilities
-p = 0.01
+p = 0.001
 baseP['inf'] = {'ADM': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},
                 'MED': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},
                 'NUR': {'ADM': p, 'MED': p, 'NUR': p, 'PAT': p},

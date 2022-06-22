@@ -51,8 +51,8 @@ f,((ax1, ax2, ax3, ax4),
 (ax9, ax10, ax11, ax12),
 (ax13, ax14, ax15, ax16)) = plt.subplots(4, 4, figsize = (10, 7.5))
 #f.suptitle('Cumulative degree distributions P(X < x)', fontsize = 'x-large') 
-f.supylabel('Frequency')
-f.supxlabel('Degree')
+f.supylabel('              Frequency')
+f.supxlabel('                  Degree')
 axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10, ax11, ax12, ax13, ax14, ax15, ax16]
 logx_axs = [ax1, ax2, ax3, ax5, ax11, ax13]
 logy_axs = [ax2, ax4, ax5, ax7, ax8, ax9, ax10, ax12, ax14, ax15, ax16]
@@ -78,6 +78,6 @@ axs[4].set_ylabel('MED')
 axs[8].set_ylabel('NUR')
 axs[12].set_ylabel('PAT')
 f.tight_layout()
-plt.savefig('/Users/marie/Documents/Utdanning/Bioteknologi master/MASTER/completeFigs/empBlockDegreeDist.png')
+plt.savefig('empBlockDegreeDist.png')
 plt.show()
 

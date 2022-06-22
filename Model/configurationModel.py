@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from empContactsArray import empContactsArray
+from empContacts import empContactsArray
 
 groups = ['ADM', 'MED', 'NUR', 'PAT']
 groupRange = {'ADM': [0, 8], 'MED': [8, 19], 'NUR': [19, 46], 'PAT': [46, 75]}
@@ -19,8 +19,8 @@ k_max = {'ADM': {'ADM': 258, 'MED': 269, 'NUR': 1096, 'PAT': 150},
          'PAT': {'ADM': 112, 'MED': 120, 'NUR': 680, 'PAT': 60}}
 
 
-params = {'ADM': {'ADM': [2, 0.3], 'MED': [1, -2.5], 'NUR': [1, 0.3], 'PAT': [0, 150]},
-          'MED': {'ADM': [10, -1.1], 'MED': [0, 0], 'NUR': [0, 430], 'PAT': [0, 340]},
+params = {'ADM': {'ADM': [1.5, 0.5], 'MED': [3, -2.5], 'NUR': [1, 0.3], 'PAT': [0, 150]},
+          'MED': {'ADM': [15, -1.1], 'MED': [0, 0], 'NUR': [0, 430], 'PAT': [0, 340]},
           'NUR': {'ADM': [0, 325], 'MED': [0, 200], 'NUR': [60, 0.6], 'PAT': [0, 610]},
           'PAT': {'ADM': [0.8, 0.5], 'MED': [0, 115], 'NUR': [0, 670], 'PAT': [0, 55]}}
 
@@ -192,4 +192,5 @@ def configMod():
             if i != j:
                 simContactsArray[i][j] -= 1
     simDailyContactsArray = simContactsArray // 4
+    
     return simContactsArray, simDailyContactsArray
